@@ -1,0 +1,17 @@
+{
+  "name": "supreme/conditional-discounts",
+  "description": "Conditional Discounts For Woocommerce",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Supreme\\ConditionalDiscounts\\": "includes/"
+    }
+  },
+  "authors": [
+    {
+      "name": "amir-canteetu",
+      "email": "amircanteetu@gmail.com"
+    }
+  ],
+  "require": {}
+}
