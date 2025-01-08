@@ -6,17 +6,16 @@ use WC_Cart;
 
 class GeneralDiscount implements DiscountInterface {
 
-    private float $cartTotal        = 0.0;
-    private float $percentage       = 10.0;  
-    private float $discountCap      = 0.0;  
-    private float $fixedAmount      = 0.0;  
-    private string $discountType    = 'percentage';  
+    private float $percentage;  
+    private float $discountCap;  
+    private string $discountType;  
+    private string $discountLabel;  
 
     public function __construct() {
-        // Load settings from WooCommerce options
-        $this->percentage   = (float) get_option('cd_general_discount_value', 10.0);
+        $this->percentage   = (float) get_option('cd_general_discount_value');
         $this->discountType = get_option('cd_general_discount_type', 'percentage');
-        $this->discountCap  = (float) get_option('cd_global_discount_cap', 0.0);
+        $this->discountCap  = (float) get_option('cd_global_discount_cap');
+        $this->discountLabel  = get_option('cd_global_discount_label', 'Store-wide Discount');      
     }
 
     /**
@@ -56,22 +55,31 @@ class GeneralDiscount implements DiscountInterface {
      *
      * @return float
      */
-    public function calculateDiscount(): float {
+public function calculateDiscount(WC_Cart $cart): float {
+     
+        $cartTotal = (float) $cart->get_cart_contents_total();
+        if ($cartTotal <= 0) { return 0.0; }
         $discount = 0.0;
 
         if ($this->discountType === 'percentage') {
-            $discount = $this->cartTotal * ($this->percentage / 100);
+            $discount = $cartTotal * ($this->percentage / 100);
+
+            if ($this->discountCap > 0) {
+                $discount = min($discount, $this->discountCap);
+            }
         } elseif ($this->discountType === 'fixed') {
             $discount = $this->fixedAmount;
+
+            // Ensure fixed discount does not exceed cart total
+            $discount = min($discount, $cartTotal);
+        } else {
+            // Unsupported discount type
+            return 0.0;
         }
 
-        // Apply discount cap if set
-        if ($this->discountCap > 0) {
-            $discount = min($discount, $this->discountCap);
-        }
-
-        return $discount;
-    }
+        // Ensure discount is a non-negative value
+        return max($discount, 0.0);
+}
 
     /**
      * Applies the discount to the WooCommerce cart.
@@ -80,12 +88,11 @@ class GeneralDiscount implements DiscountInterface {
      * @return void
      */
     public function apply($cart): void {
-        $discountAmount = $this->calculateDiscount();
-
+        $discountAmount = $this->calculateDiscount($cart);
         if ($discountAmount > 0) {
             $cart->add_fee(
-                __('Store-wide Discount', 'conditional-discounts'),
-                -$discountAmount // WooCommerce "fee" supports negative values as discounts
+                __($this->discountLabel, 'conditional-discounts'),
+                -$discountAmount  
             );
         }
     }

@@ -134,6 +134,14 @@ class SettingsPage extends WC_Settings_Page {
                 'desc_tip' => __('Enter a maximum discount value, e.g., 50 for $50. Leave blank to disable.', 'conditional-discounts'),
             ],
             [
+                'title'    => __('Global Discount Label', 'conditional-discounts'),
+                'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
+                'id'       => 'cd_global_discount_label',
+                'default'  => 'Store-wide Discount',
+                'type'     => 'text',
+                'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
+            ],            
+            [
                 'title'    => __('General Discount Validity Start Date', 'conditional-discounts'),
                 'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),
                 'id'       => 'cd_general_discount_start_date',

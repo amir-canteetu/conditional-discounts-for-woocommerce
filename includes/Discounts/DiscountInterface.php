@@ -25,14 +25,14 @@ interface DiscountInterface {
      *
      * @return float The discount amount.
      */
-    public function calculateDiscount(): float;
+    public function calculateDiscount(WC_Cart $cart): float;
 
     /**
      * Applies the discount to the appropriate items or cart total.
      *
      * @return void
      */
-    public function apply($context): void;
+    public function apply(WC_Cart $cart): void;
 
     /**
      * Returns the name or description of the discount.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Conditional Discounts for WooCommerce II
+ * Plugin Name: Conditional Discounts for WooCommerce
  * Description: A plugin to create cart-based conditional discounts.
  * Version: 1.0.0
  * Author: Amir Candido
