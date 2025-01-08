@@ -26,14 +26,8 @@ class SettingsPage extends WC_Settings_Page {
         $this->id    = 'conditional_discounts';
         $this->label = __('Conditional Discounts', 'cdwc');
 
-        // creates the tab sections
         add_filter('woocommerce_get_sections_' . $this->id, [$this, 'get_sections']);
-        //define the settings fields
-        add_filter('woocommerce_get_settings_' . $this->id, [$this, 'get_settings'], 10, 2);
-
-        // add_filter('woocommerce_settings_tabs_array', [$this, 'add_settings_tab'], 50);
-        // add_action('woocommerce_settings_' . $this->id, [$this, 'output']);
-        // add_action('woocommerce_settings_save_' . $this->id, [$this, 'save']);        
+        add_filter('woocommerce_get_settings_' . $this->id, [$this, 'get_settings'], 10, 2);     
         
         parent::__construct();
     } 
@@ -89,7 +83,7 @@ class SettingsPage extends WC_Settings_Page {
     private function get_general_settings() {
         return [
             [
-                'title'    => __('General Discounts', 'conditional-discounts'),
+                'title'    => __('General (Store-Wide) Discounts', 'conditional-discounts'),
                 'type'     => 'title',
                 'desc'     => __('Configure general discount rules that apply across the store.', 'conditional-discounts'),
                 'id'       => 'cd_general_discounts_section',

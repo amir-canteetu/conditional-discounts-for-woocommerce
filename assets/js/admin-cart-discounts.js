@@ -3,8 +3,8 @@ jQuery(document).ready(function ($) {
     const isCartDiscountsEnabled = $("#cd_enable_cart_discounts").is(
       ":checked"
     );
-    // Disable or enable all other form fields
-    $(":input")
+
+    $(".form-table input")
       .not("#cd_enable_cart_discounts")
       .prop("disabled", !isCartDiscountsEnabled);
   }

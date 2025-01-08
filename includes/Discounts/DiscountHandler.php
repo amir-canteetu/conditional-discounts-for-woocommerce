@@ -16,8 +16,9 @@ class DiscountHandler {
     private $discounts = [];
 
     public function __construct() {
-        // Add all discounts
-        $this->discounts[] = new CartDiscount();
+        $this->discounts[] = new GeneralDiscount();
+        // $this->discounts[] = new CartDiscount();
+        // $this->discounts[] = new ProductDiscount();        
     }    
 
     /**

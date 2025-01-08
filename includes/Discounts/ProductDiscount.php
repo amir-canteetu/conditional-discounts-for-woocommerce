@@ -2,7 +2,7 @@
 
 namespace Supreme\ConditionalDiscounts\Discounts;
 
-class Product implements DiscountInterface {
+class ProductDiscount implements DiscountInterface {
 
     public function apply($context): void {
         $cart = $context; // Assume $context is WC_Cart

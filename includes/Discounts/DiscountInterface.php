@@ -2,6 +2,8 @@
 
 namespace Supreme\ConditionalDiscounts\Discounts;
 
+use WC_Cart;
+
 /**
  * Interface DiscountInterface
  *
@@ -16,7 +18,7 @@ interface DiscountInterface {
      *
      * @return bool True if the conditions are met, false otherwise.
      */
-    public function isApplicable(): bool;
+    public function isApplicable(WC_Cart $cart): bool;
 
     /**
      * Calculates the discount amount to be applied.

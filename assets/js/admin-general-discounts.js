@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
       ":checked"
     );
     // Disable or enable all other form fields
-    $(":input")
+    $(".form-table input")
       .not("#cd_enable_general_discounts")
       .prop("disabled", !isGeneralDiscountsEnabled);
   }

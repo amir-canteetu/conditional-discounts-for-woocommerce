@@ -28,7 +28,7 @@ class Plugin {
     }
 
     private function initialize_services() {      
-        // (new DiscountHandler())->register();
+        (new DiscountHandler())->register();
     }
 
     private function define_admin_filter_hooks() {
@@ -44,7 +44,7 @@ class Plugin {
                 
             wp_enqueue_script(
                 'cdwc-conditional-discounts-admin',
-                CDWC_PLUGIN_URL . 'assets/js/admin-conditional-discounts.js',
+                CDWC_PLUGIN_URL . 'assets/js/admin-general-discounts.js',
                 ['jquery'],  
                 '1.0.0',     
                 true         
