@@ -20,7 +20,7 @@ class DiscountHandler {
     public function __construct() {
         $this->discounts[] = new GeneralDiscount();
         $this->discounts[] = new CartDiscount();
-        // $this->discounts[] = new ProductDiscount();        
+        $this->discounts[] = new ProductDiscount();        
     }    
 
     /**

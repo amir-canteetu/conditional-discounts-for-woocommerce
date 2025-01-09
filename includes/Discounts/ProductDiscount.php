@@ -2,55 +2,97 @@
 
 namespace Supreme\ConditionalDiscounts\Discounts;
 
+use WC_Cart;
+
 class ProductDiscount implements DiscountInterface {
 
-    public function apply($context): void {
-        $cart = $context; // Assume $context is WC_Cart
-        $cart->add_fee(__('Product Discount', 'cdwc'), -10); // Example: Apply a flat $10 discount
-    }
+    private string  $endDate;  
+    private string  $startDate;  
+    private float   $discountCap;  
+    private string  $minCartTotal;  
+    private string  $maxCartTotal;     
+    private string  $discountType; 
+    private float   $discountValue;  
+    private string  $discountLabel;  
+    private string  $minCartQuantity;  
+    private string  $enableDiscounts;  
+    private array   $discountedProducts;  
+    private array   $discountedCategories;  
 
-    public function validate($context): bool {
-        $cart = $context; // Assume $context is WC_Cart
-        return $cart->get_subtotal() >= 100; // Example: Apply discount only if cart total >= $100
+    public function __construct() {
+
+        $this->endDate              = get_option('cd_product_discount_end_date');   
+        $this->startDate            = get_option('cd_product_discount_start_date');
+        $this->discountValue        = (float) get_option('cd_product_discount_value');
+        $this->minCartTotal         = floatval(get_option('cd_product_minimum_cart_total'));
+        $this->discountType         = get_option('cd_product_discount_type', 'percentage');
+        $this->discountLabel        = get_option('cd_product_discount_label', 'Product Discount');   
+        $this->enableDiscounts      = get_option('cd_enable_product_discounts');
+        $this->minCartQuantity      = intval(get_option('cd_product_min_cart_quantity'));   
+        
+    }    
+
+    public function validate(WC_Cart $cart): bool {
+        return $this->isApplicable($cart);
+    }    
+       
+    public function isApplicable(WC_Cart $cart): bool {
+
+        if ($this->enableDiscounts !== 'yes') { return false; }
+
+        $currentDate = current_time('Y-m-d');
+        if ((!empty($this->startDate) && $currentDate < $this->startDate) || (!empty($this->endDate) && $currentDate > $this->endDate)) { return false; }
+        if ($cart->get_cart_contents_total() < $this->minCartTotal ) { return false;   }
+        if ($cart->get_cart_contents_count() < $this->minCartQuantity ) { return false; }
+
+        return true;
     }
+           
+
+    public function apply($cart): void {
+
+        $discount_value = $this->calculateDiscount($cart);
+
+        if ($discount_value > 0) {
+            $cart->add_fee(__($this->discountLabel, 'cdwc'), -$discount_value);
+        }
+    }
+    
+    public function calculateDiscount(WC_Cart $cart): float {
+
+        $discounted_products    = get_option('cd_select_discounted_products', []);
+        $discounted_categories  = get_option('cd_select_discounted_categories', []);
+        if ( $this->discountValue <= 0 || empty($discounted_products) && empty($discounted_categories)) {
+            return 0.0;
+        }
+
+        $total_discount = 0.0;
+    
+        foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
+
+            $product_id         = $cart_item['product_id'];
+            $product            = wc_get_product($product_id);
+            $product_categories = wp_get_post_terms($product_id, 'product_cat', ['fields' => 'ids']);
+            $product_price      = $product->get_price();
+            $quantity           = $cart_item['quantity'];
+            $is_eligible        = in_array($product_id, $discounted_products, true) || array_intersect($discounted_categories, $product_categories);
+
+            if ($is_eligible) {
+                if ($this->discountType === 'percentage') {
+                    $discount = ($product_price * $this->discountValue / 100) * $quantity;
+                } else { 
+                    $discount = $this->discountValue * $quantity;
+                }
+                $total_discount += $discount;
+            }
+        }
+
+        return $total_discount;
+    }    
 
     public function getDescription(): string {
         return __('Flat $10 off for carts over $100.', 'cdwc');
     }
-
-    /**
-     * Apply product discounts.
-     *
-     * Adjusts the price of products based on custom discount rules.
-     *
-     * @param float    $price The original product price.
-     * @param WC_Product $product The WooCommerce product object.
-     * @return float The modified price.
-     */
-    public function apply_product_discounts($price, $product) {
-        // Check if product discounts are enabled.
-        $enable_discounts = get_option('cdwc_enable_product_discounts', 'yes');
-        if ($enable_discounts !== 'yes') {
-            return $price;
-        }
-
-        // Example: Apply a 15% discount to products in a specific category.
-        $discount_percentage = floatval(get_option('cdwc_product_discount_percentage', 0));
-
-        if ($discount_percentage > 0 && has_term('discounted-category', 'product_cat', $product->get_id())) {
-            $price = $price - ($price * ($discount_percentage / 100));
-        }
-
-        return $price;
-    }
-
-
-
-
-
-
-
-
 
 
 }

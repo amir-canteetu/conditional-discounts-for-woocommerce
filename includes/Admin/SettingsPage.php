@@ -225,7 +225,7 @@ if (!defined('ABSPATH')) {
                         'min' => '0',
                         'step' => '0.01',
                     ],
-                ],   
+                ],                  
                 [
                     'title'    => __('Cart Discount Label', 'conditional-discounts'),
                     'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
@@ -297,6 +297,25 @@ if (!defined('ABSPATH')) {
                     'options'  => $this->get_categories_list(),
                 ],
                 [
+                    'title'    => __('Minimum Cart Total', 'conditional-discounts'),
+                    'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts'),
+                    'id'       => 'cd_product_minimum_cart_total',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
+                ],  
+                [
+                    'title'    => __('Minimum Cart Quantity', 'cdwc'),
+                    'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'cdwc'),
+                    'id'       => 'cd_product_min_cart_quantity',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => true,
+                    'custom_attributes' => [
+                        'min' => '0',
+                    ],
+                ],                               
+                [
                     'title'    => __('Discount Type', 'conditional-discounts'),
                     'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts'),
                     'id'       => 'cd_product_discount_type',
@@ -309,7 +328,7 @@ if (!defined('ABSPATH')) {
                 ],
                 [
                     'title'    => __('Discount Value', 'conditional-discounts'),
-                    'desc'     => __('Enter the discount value.', 'conditional-discounts'),
+                    'desc'     => __('Enter the discount value. ', 'conditional-discounts'),
                     'id'       => 'cd_product_discount_value',
                     'default'  => '',
                     'type'     => 'number',
@@ -318,7 +337,16 @@ if (!defined('ABSPATH')) {
                         'min' => '0',
                         'step' => '0.01',
                     ],
+                    'desc_tip' => __('When this is a fixed amount, the total discount will be multiplied by the quantity of eligible goods.', 'conditional-discounts'),
                 ],
+                [
+                    'title'    => __('Product Discount Label', 'conditional-discounts'),
+                    'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
+                    'id'       => 'cd_product_discount_label',
+                    'default'  => 'Cart Discount',
+                    'type'     => 'text',
+                    'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
+                ],                 
                 [
                     'title'    => __('Product Discount Validity Start Date', 'conditional-discounts'),
                     'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),
