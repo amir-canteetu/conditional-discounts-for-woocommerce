@@ -16,19 +16,21 @@ class ProductDiscount implements DiscountInterface {
     private string  $discountLabel;  
     private string  $minCartQuantity;  
     private string  $enableDiscounts;  
-    private array   $discountedProducts;  
-    private array   $discountedCategories;  
+    private array   $discounted_products;  
+    private array   $discounted_categories;  
 
     public function __construct() {
 
-        $this->endDate              = get_option('cd_product_discount_end_date');   
-        $this->startDate            = get_option('cd_product_discount_start_date');
-        $this->discountValue        = (float) get_option('cd_product_discount_value');
-        $this->minCartTotal         = floatval(get_option('cd_product_minimum_cart_total'));
-        $this->discountType         = get_option('cd_product_discount_type', 'percentage');
-        $this->discountLabel        = get_option('cd_product_discount_label', 'Product Discount');   
-        $this->enableDiscounts      = get_option('cd_enable_product_discounts');
-        $this->minCartQuantity      = intval(get_option('cd_product_min_cart_quantity'));   
+        $this->endDate                  = get_option('cd_product_discount_end_date');   
+        $this->startDate                = get_option('cd_product_discount_start_date');
+        $this->discountValue            = (float) get_option('cd_product_discount_value', 0);
+        $this->minCartTotal             = (float) get_option('cd_product_minimum_cart_total');
+        $this->discountType             = get_option('cd_product_discount_type', 'percentage');
+        $this->discountLabel            = get_option('cd_product_discount_label', 'Product Discount');   
+        $this->enableDiscounts          = get_option('cd_enable_product_discounts');
+        $this->minCartQuantity          = (int) get_option('cd_product_min_cart_quantity');  
+        $this->discounted_products      = get_option('cd_select_discounted_products', []);
+        $this->discounted_categories    = get_option('cd_select_discounted_categories', []); 
         
     }    
 
@@ -60,9 +62,7 @@ class ProductDiscount implements DiscountInterface {
     
     public function calculateDiscount(WC_Cart $cart): float {
 
-        $discounted_products    = get_option('cd_select_discounted_products', []);
-        $discounted_categories  = get_option('cd_select_discounted_categories', []);
-        if ( $this->discountValue <= 0 || empty($discounted_products) && empty($discounted_categories)) {
+        if ( $this->discountValue <= 0 || empty( $this->discounted_products ) && empty( $this->discounted_categories ) ) {
             return 0.0;
         }
 
@@ -74,8 +74,9 @@ class ProductDiscount implements DiscountInterface {
             $product            = wc_get_product($product_id);
             $product_categories = wp_get_post_terms($product_id, 'product_cat', ['fields' => 'ids']);
             $product_price      = $product->get_price();
+            if ($product_price <= 0) { continue; }
             $quantity           = $cart_item['quantity'];
-            $is_eligible        = in_array($product_id, $discounted_products, true) || array_intersect($discounted_categories, $product_categories);
+            $is_eligible        = in_array($product_id, $this->discounted_products, true) || array_intersect($this->discounted_categories, $product_categories);
 
             if ($is_eligible) {
                 if ($this->discountType === 'percentage') {
@@ -91,7 +92,11 @@ class ProductDiscount implements DiscountInterface {
     }    
 
     public function getDescription(): string {
-        return __('Flat $10 off for carts over $100.', 'cdwc');
+        return sprintf(
+            __('%s %s discount for eligible products.', 'cdwc'),
+            $this->discountValue,
+            $this->discountType === 'percentage' ? '%' : '$'
+        );
     }
 
 
