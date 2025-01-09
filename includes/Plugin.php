@@ -2,8 +2,11 @@
 
 namespace Supreme\ConditionalDiscounts;
 
+use Supreme\ConditionalDiscounts\Loader;
+use Supreme\ConditionalDiscounts\Admin\Admin;
 use Supreme\ConditionalDiscounts\Admin\SettingsPage;
 use Supreme\ConditionalDiscounts\Discounts\DiscountHandler;
+
 
 class Plugin {
 
@@ -13,6 +16,7 @@ class Plugin {
 
     public function __construct() {
         $this->loader = new Loader();
+        
         $this->define_admin_filter_hooks(); 
         $this->define_admin_action_hooks();  
         $this->define_public_hooks();  
@@ -32,65 +36,21 @@ class Plugin {
     }
 
     private function define_admin_filter_hooks() {
-        $this->loader->add_filter('woocommerce_get_settings_pages', [$this, 'add_settings_page']);
+
+        $this->loader->add_filter('woocommerce_get_settings_pages', function($settings){
+            $settings[] = include __DIR__ . '/Admin/SettingsPage.php';
+            return $settings;        
+        });
+
+        $this->loader->add_filter('plugin_action_links_conditional-discounts-for-woocommerce/cdwc.php', [new Admin(), 'cdwc_add_settings_link']);
     }
+   
 
     private function define_admin_action_hooks() {
-        $this->loader->add_action('admin_enqueue_scripts', function() {
-            if (isset($_GET['page'], $_GET['tab'], $_GET['section']) &&
-            $_GET['page'] === 'wc-settings' &&
-            $_GET['tab'] === 'conditional_discounts' &&
-            $_GET['section'] === '') {
-                
-            wp_enqueue_script(
-                'cdwc-conditional-discounts-admin',
-                CDWC_PLUGIN_URL . 'assets/js/admin-general-discounts.js',
-                ['jquery'],  
-                '1.0.0',     
-                true         
-            );
-        }
-        });
-
-
-        $this->loader->add_action('admin_enqueue_scripts', function() {
-            if (isset($_GET['page'], $_GET['tab'], $_GET['section']) &&
-            $_GET['page'] === 'wc-settings' &&
-            $_GET['tab'] === 'conditional_discounts' &&
-            $_GET['section'] === 'cart_discounts') {
-                
-            wp_enqueue_script(
-                'cdwc-cart-discounts-admin',
-                CDWC_PLUGIN_URL . 'assets/js/admin-cart-discounts.js',
-                ['jquery'],  
-                '1.0.0',     
-                true         
-            );
-        }
-        });
-
-        $this->loader->add_action('admin_enqueue_scripts', function() {
-            if (isset($_GET['page'], $_GET['tab'], $_GET['section']) &&
-            $_GET['page'] === 'wc-settings' &&
-            $_GET['tab'] === 'conditional_discounts' &&
-            $_GET['section'] === 'product_discounts') {
-                
-            wp_enqueue_script(
-                'cdwc-product-discounts-admin',
-                CDWC_PLUGIN_URL . 'assets/js/admin-product-discounts.js',
-                ['jquery'],  
-                '1.0.0',     
-                true         
-            );
-        }
-        });    
-
+        $this->loader->add_action('admin_enqueue_scripts', [new Admin(), 'cdwc_enqueue_admin_scripts']);
     }    
     
-    public function add_settings_page($settings) {
-        $settings[] = new SettingsPage();
-        return $settings;
-    }
+
 
     /**
      * Register all of the hooks related to the public-facing functionality

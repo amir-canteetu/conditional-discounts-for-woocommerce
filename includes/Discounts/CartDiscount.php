@@ -2,6 +2,8 @@
 
 namespace Supreme\ConditionalDiscounts\Discounts;
 
+use WC_Cart;
+
 class CartDiscount implements DiscountInterface {
 
     public function apply($context): void {

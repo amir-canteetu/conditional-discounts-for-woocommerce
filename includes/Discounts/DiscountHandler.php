@@ -17,7 +17,7 @@ class DiscountHandler {
 
     public function __construct() {
         $this->discounts[] = new GeneralDiscount();
-        // $this->discounts[] = new CartDiscount();
+        //$this->discounts[] = new CartDiscount();
         // $this->discounts[] = new ProductDiscount();        
     }    
 
@@ -26,7 +26,6 @@ class DiscountHandler {
      */
     public function register() {
         add_action('woocommerce_cart_calculate_fees', [$this, 'apply_discounts']);
-        //add_filter('woocommerce_product_get_price', [$this, 'apply_product_discounts'], 10, 2);
     }
 
     /**

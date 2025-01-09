@@ -42,6 +42,6 @@ function cdwc_load_textdomain() {
 add_action('plugins_loaded', 'cdwc_load_textdomain');
 
 function cdwc_initialize_plugin() {
-    Supreme\ConditionalDiscounts\Plugin::instance()->run();
+    Supreme\ConditionalDiscounts\Plugin::instance()->run(); //loader->run();
 }
 add_action('plugins_loaded', 'cdwc_initialize_plugin');
