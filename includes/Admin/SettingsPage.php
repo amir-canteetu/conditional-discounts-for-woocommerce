@@ -193,14 +193,6 @@ if (!defined('ABSPATH')) {
                     'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
                 ],
                 [
-                    'title'    => __('Maximum Cart Total', 'conditional-discounts'),
-                    'desc'     => __('Set a maximum cart total allowed for the discount to apply.', 'conditional-discounts'),
-                    'id'       => 'cd_maximum_cart_total',
-                    'default'  => '',
-                    'type'     => 'number',
-                    'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
-                ],
-                [
                     'title'    => __('Minimum Cart Quantity', 'cdwc'),
                     'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'cdwc'),
                     'id'       => 'cdwc_cart_quantity_discount',
@@ -233,7 +225,15 @@ if (!defined('ABSPATH')) {
                         'min' => '0',
                         'step' => '0.01',
                     ],
-                ],           
+                ],   
+                [
+                    'title'    => __('Cart Discount Label', 'conditional-discounts'),
+                    'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
+                    'id'       => 'cd_cart_discount_label',
+                    'default'  => 'Cart Discount',
+                    'type'     => 'text',
+                    'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
+                ],                         
                 [
                     'title'    => __('Cart Discount Validity Start Date', 'conditional-discounts'),
                     'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),

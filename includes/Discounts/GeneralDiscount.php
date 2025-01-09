@@ -25,22 +25,19 @@ class GeneralDiscount implements DiscountInterface {
      * @return bool
      */
     public function isApplicable(WC_Cart $cart): bool {
-        // Check if General Discounts are enabled
+        
         $enable_general_discounts = get_option('cd_enable_general_discounts', 'no');
         if ($enable_general_discounts !== 'yes') {
             return false;
         }
     
-        // Get the current date
         $current_date = current_time('Y-m-d');
     
-        // Check the start date
         $start_date = get_option('cd_general_discount_start_date', '');
         if (!empty($start_date) && $current_date < $start_date) {
             return false;
         }
     
-        // Check the end date
         $end_date = get_option('cd_general_discount_end_date', '');
         if (!empty($end_date) && $current_date > $end_date) {
             return false;

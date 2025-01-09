@@ -2,6 +2,8 @@
 
 namespace Supreme\ConditionalDiscounts\Discounts;
 
+use WC_Cart;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -17,7 +19,7 @@ class DiscountHandler {
 
     public function __construct() {
         $this->discounts[] = new GeneralDiscount();
-        //$this->discounts[] = new CartDiscount();
+        $this->discounts[] = new CartDiscount();
         // $this->discounts[] = new ProductDiscount();        
     }    
 
@@ -25,7 +27,7 @@ class DiscountHandler {
      * Register hooks and filters for applying discounts.
      */
     public function register() {
-        add_action('woocommerce_cart_calculate_fees', [$this, 'apply_discounts']);
+        add_action('woocommerce_cart_calculate_fees', [$this, 'applyDiscounts']);
     }
 
     /**
@@ -35,9 +37,9 @@ class DiscountHandler {
      *
      * @param WC_Cart $cart The WooCommerce cart object.
      */
-    public function apply_discounts($cart) {
+    public function applyDiscounts(WC_Cart $cart): void {
         foreach ($this->discounts as $discount) {
-            if ($discount->validate($cart)) {
+            if ($discount instanceof DiscountInterface && $discount->validate($cart)) {
                 $discount->apply($cart);
             }
         }
