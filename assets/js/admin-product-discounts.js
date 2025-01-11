@@ -1,11 +1,11 @@
 jQuery(document).ready(function ($) {
   function toggleProductDiscountFields() {
-    const isProductDiscountsEnabled = $("#cd_enable_product_discounts").is(
+    const isProductDiscountsEnabled = $("#cdwc_enable_product_discounts").is(
       ":checked"
     );
     // Disable or enable all other form fields
     $(".form-table input")
-      .not("#cd_enable_product_discounts")
+      .not("#cdwc_enable_product_discounts")
       .prop("disabled", !isProductDiscountsEnabled);
   }
 
@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
   toggleProductDiscountFields();
 
   // Toggle on checkbox change
-  $("#cd_enable_product_discounts").on("change", function () {
+  $("#cdwc_enable_product_discounts").on("change", function () {
     toggleProductDiscountFields();
   });
 });

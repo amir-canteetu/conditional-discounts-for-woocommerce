@@ -2,12 +2,12 @@ jQuery(document).ready(function ($) {
   // toggle the fields based on enabling/disabling General Discounts
   //Todo: rework on this logic
   function toggleGeneralDiscountFields() {
-    const isGeneralDiscountsEnabled = $("#cd_enable_general_discounts").is(
+    const isGeneralDiscountsEnabled = $("#cdwc_enable_general_discounts").is(
       ":checked"
     );
     // Disable or enable all other form fields
     $(".form-table input")
-      .not("#cd_enable_general_discounts")
+      .not("#cdwc_enable_general_discounts")
       .prop("disabled", !isGeneralDiscountsEnabled);
   }
 
@@ -15,7 +15,7 @@ jQuery(document).ready(function ($) {
   toggleGeneralDiscountFields();
 
   // Add event listener to the General Discounts checkbox
-  $("#cd_enable_general_discounts").on("change", function () {
+  $("#cdwc_enable_general_discounts").on("change", function () {
     toggleGeneralDiscountFields();
   });
 });

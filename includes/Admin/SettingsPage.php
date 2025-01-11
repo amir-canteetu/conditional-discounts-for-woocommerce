@@ -86,19 +86,19 @@ if (!defined('ABSPATH')) {
                     'title'    => __('General (Store-Wide) Discounts', 'conditional-discounts'),
                     'type'     => 'title',
                     'desc'     => __('Configure general discount rules that apply across the store.', 'conditional-discounts'),
-                    'id'       => 'cd_general_discounts_section',
+                    'id'       => 'cdwc_general_discounts_section',
                 ],
                 [
                     'title'    => __('Enable General Discounts', 'conditional-discounts'),
                     'desc'     => __('Enable or disable general discounts for your store.', 'conditional-discounts'),
-                    'id'       => 'cd_enable_general_discounts',
+                    'id'       => 'cdwc_enable_general_discounts',
                     'default'  => 'no',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Discount Type', 'conditional-discounts'),
                     'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts'),
-                    'id'       => 'cd_general_discount_type',
+                    'id'       => 'cdwc_general_discount_type',
                     'default'  => 'percentage',
                     'type'     => 'select',
                     'options'  => [
@@ -109,7 +109,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Value', 'conditional-discounts'),
                     'desc'     => __('Enter the discount value.', 'conditional-discounts'),
-                    'id'       => 'cd_general_discount_value',
+                    'id'       => 'cdwc_general_discount_value',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => true,
@@ -121,14 +121,14 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Combinability', 'conditional-discounts'),
                     'desc'     => __('Allow this discount to combine with other discounts.', 'conditional-discounts'),
-                    'id'       => 'cd_discount_combinability',
+                    'id'       => 'cdwc_discount_combinability',
                     'default'  => 'yes',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Global Discount Cap', 'conditional-discounts'),
                     'desc'     => __('Set a maximum discount amount for all discounts.', 'conditional-discounts'),
-                    'id'       => 'cd_global_discount_cap',
+                    'id'       => 'cdwc_global_discount_cap',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => __('Enter a maximum discount value, e.g., 50 for $50. Leave blank to disable.', 'conditional-discounts'),
@@ -136,7 +136,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Global Discount Label', 'conditional-discounts'),
                     'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
-                    'id'       => 'cd_global_discount_label',
+                    'id'       => 'cdwc_global_discount_label',
                     'default'  => 'Store-wide Discount',
                     'type'     => 'text',
                     'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
@@ -144,7 +144,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('General Discount Validity Start Date', 'conditional-discounts'),
                     'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_general_discount_start_date',
+                    'id'       => 'cdwc_general_discount_start_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the starting date for the discount to be valid.', 'conditional-discounts'),
@@ -152,14 +152,14 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('General Discount Validity End Date', 'conditional-discounts'),
                     'desc'     => __('Set the end date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_general_discount_end_date',
+                    'id'       => 'cdwc_general_discount_end_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the ending date for the discount to be valid.', 'conditional-discounts'),
                 ],             
                 [
                     'type'     => 'sectionend',
-                    'id'       => 'cd_general_discounts_section',
+                    'id'       => 'cdwc_general_discounts_section',
                 ],
             ];
         }
@@ -175,19 +175,19 @@ if (!defined('ABSPATH')) {
                     'title'    => __('Cart-Based Discounts', 'conditional-discounts'),
                     'type'     => 'title',
                     'desc'     => __('Set up discounts based on the contents of the shopping cart.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_based_discounts_section',
+                    'id'       => 'cdwc_cart_based_discounts_section',
                 ],
                 [
                     'title'    => __('Enable Cart-Based Discounts', 'conditional-discounts'),
                     'desc'     => __('Enable or disable cart-based discounts for your store.', 'conditional-discounts'),
-                    'id'       => 'cd_enable_cart_discounts',
+                    'id'       => 'cdwc_enable_cart_discounts',
                     'default'  => 'no',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Minimum Cart Total', 'conditional-discounts'),
                     'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts'),
-                    'id'       => 'cd_minimum_cart_total',
+                    'id'       => 'cdwc_minimum_cart_total',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
@@ -206,7 +206,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Type', 'conditional-discounts'),
                     'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_discount_type',
+                    'id'       => 'cdwc_cart_discount_type',
                     'default'  => 'percentage',
                     'type'     => 'select',
                     'options'  => [
@@ -217,7 +217,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Value', 'conditional-discounts'),
                     'desc'     => __('Enter the discount value.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_discount_value',
+                    'id'       => 'cdwc_cart_discount_value',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => true,
@@ -229,7 +229,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Cart Discount Label', 'conditional-discounts'),
                     'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_discount_label',
+                    'id'       => 'cdwc_cart_discount_label',
                     'default'  => 'Cart Discount',
                     'type'     => 'text',
                     'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
@@ -237,7 +237,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Cart Discount Validity Start Date', 'conditional-discounts'),
                     'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_discount_start_date',
+                    'id'       => 'cdwc_cart_discount_start_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the starting date for the discount to be valid.', 'conditional-discounts'),
@@ -245,14 +245,14 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Cart Discount Validity End Date', 'conditional-discounts'),
                     'desc'     => __('Set the end date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_cart_discount_end_date',
+                    'id'       => 'cdwc_cart_discount_end_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the ending date for the discount to be valid.', 'conditional-discounts'),
                 ],            
                 [
                     'type'     => 'sectionend',
-                    'id'       => 'cd_cart_based_discounts_section',
+                    'id'       => 'cdwc_cart_based_discounts_section',
                 ],
             ];
         }
@@ -269,19 +269,19 @@ if (!defined('ABSPATH')) {
                     'title'    => __('Product-Based Discounts', 'conditional-discounts'),
                     'type'     => 'title',
                     'desc'     => __('Set up discounts based on specific products or product categories.', 'conditional-discounts'),
-                    'id'       => 'cd_product_based_discounts_section',
+                    'id'       => 'cdwc_product_based_discounts_section',
                 ],
                 [
                     'title'    => __('Enable Product-Based Discounts', 'conditional-discounts'),
                     'desc'     => __('Enable or disable product-based discounts for your store.', 'conditional-discounts'),
-                    'id'       => 'cd_enable_product_discounts',
+                    'id'       => 'cdwc_enable_product_discounts',
                     'default'  => 'no',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Select Products for Discount', 'conditional-discounts'),
                     'desc'     => __('Choose specific products to apply the discount.', 'conditional-discounts'),
-                    'id'       => 'cd_select_discounted_products',
+                    'id'       => 'cdwc_select_discounted_products',
                     'default'  => '',
                     'type'     => 'multiselect',
                     'class'    => 'wc-enhanced-select',
@@ -290,7 +290,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Select Categories for Discount', 'conditional-discounts'),
                     'desc'     => __('Choose product categories to apply the discount.', 'conditional-discounts'),
-                    'id'       => 'cd_select_discounted_categories',
+                    'id'       => 'cdwc_select_discounted_categories',
                     'default'  => '',
                     'type'     => 'multiselect',
                     'class'    => 'wc-enhanced-select',
@@ -299,7 +299,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Minimum Cart Total', 'conditional-discounts'),
                     'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts'),
-                    'id'       => 'cd_product_minimum_cart_total',
+                    'id'       => 'cdwc_product_minimum_cart_total',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
@@ -307,7 +307,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Minimum Cart Quantity', 'cdwc'),
                     'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'cdwc'),
-                    'id'       => 'cd_product_min_cart_quantity',
+                    'id'       => 'cdwc_product_min_cart_quantity',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => true,
@@ -318,7 +318,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Type', 'conditional-discounts'),
                     'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts'),
-                    'id'       => 'cd_product_discount_type',
+                    'id'       => 'cdwc_product_discount_type',
                     'default'  => 'percentage',
                     'type'     => 'select',
                     'options'  => [
@@ -329,7 +329,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Value', 'conditional-discounts'),
                     'desc'     => __('Enter the discount value. ', 'conditional-discounts'),
-                    'id'       => 'cd_product_discount_value',
+                    'id'       => 'cdwc_product_discount_value',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => true,
@@ -342,7 +342,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Product Discount Label', 'conditional-discounts'),
                     'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
-                    'id'       => 'cd_product_discount_label',
+                    'id'       => 'cdwc_product_discount_label',
                     'default'  => 'Cart Discount',
                     'type'     => 'text',
                     'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
@@ -350,7 +350,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Product Discount Validity Start Date', 'conditional-discounts'),
                     'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_product_discount_start_date',
+                    'id'       => 'cdwc_product_discount_start_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the starting date for the discount to be valid.', 'conditional-discounts'),
@@ -358,14 +358,14 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Product Discount Validity End Date', 'conditional-discounts'),
                     'desc'     => __('Set the end date for the discount validity.', 'conditional-discounts'),
-                    'id'       => 'cd_product_discount_end_date',
+                    'id'       => 'cdwc_product_discount_end_date',
                     'default'  => '',
                     'type'     => 'date',
                     'desc_tip' => __('Select the ending date for the discount to be valid.', 'conditional-discounts'),
                 ],
                 [
                     'type'     => 'sectionend',
-                    'id'       => 'cd_product_based_discounts_section',
+                    'id'       => 'cdwc_product_based_discounts_section',
                 ],
             ];
         }

@@ -1,11 +1,11 @@
 jQuery(document).ready(function ($) {
   function toggleCartDiscountFields() {
-    const isCartDiscountsEnabled = $("#cd_enable_cart_discounts").is(
+    const isCartDiscountsEnabled = $("#cdwc_enable_cart_discounts").is(
       ":checked"
     );
 
     $(".form-table input")
-      .not("#cd_enable_cart_discounts")
+      .not("#cdwc_enable_cart_discounts")
       .prop("disabled", !isCartDiscountsEnabled);
   }
 
@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
   toggleCartDiscountFields();
 
   // Toggle on checkbox change
-  $("#cd_enable_cart_discounts").on("change", function () {
+  $("#cdwc_enable_cart_discounts").on("change", function () {
     toggleCartDiscountFields();
   });
 });

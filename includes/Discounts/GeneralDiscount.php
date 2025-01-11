@@ -13,15 +13,15 @@ class GeneralDiscount implements DiscountInterface {
     private bool $combinability;
 
     public function __construct() {
-        $this->discountValue    = (float) get_option('cd_general_discount_value');
-        $this->discountType     = get_option('cd_general_discount_type', 'percentage');
-        $this->discountCap      = (float) get_option('cd_global_discount_cap');
-        $this->discountLabel    = get_option('cd_global_discount_label', 'Store-wide Discount');      
-        $this->combinability    = get_option('cd_discount_combinability') == "yes" ? true : false;     
+        $this->discountValue    = (float) get_option('cdwc_general_discount_value');
+        $this->discountType     = get_option('cdwc_general_discount_type', 'percentage');
+        $this->discountCap      = (float) get_option('cdwc_global_discount_cap');
+        $this->discountLabel    = get_option('cdwc_global_discount_label', 'Store-wide Discount');      
+        $this->combinability    = get_option('cdwc_discount_combinability') == "yes" ? true : false;     
     }
 
     public function isEnabled( ): bool {
-            return get_option('cd_enable_general_discounts') == 'yes' ? true : false;
+            return get_option('cdwc_enable_general_discounts') == 'yes' ? true : false;
     }
 
     /**
@@ -32,19 +32,19 @@ class GeneralDiscount implements DiscountInterface {
      */
     public function isApplicable(WC_Cart $cart): bool {
         
-        $enable_general_discounts = get_option('cd_enable_general_discounts', 'no');
+        $enable_general_discounts = get_option('cdwc_enable_general_discounts', 'no');
         if ($enable_general_discounts !== 'yes') {
             return false;
         }
     
         $current_date = current_time('Y-m-d');
     
-        $start_date = get_option('cd_general_discount_start_date', '');
+        $start_date = get_option('cdwc_general_discount_start_date', '');
         if (!empty($start_date) && $current_date < $start_date) {
             return false;
         }
     
-        $end_date = get_option('cd_general_discount_end_date', '');
+        $end_date = get_option('cdwc_general_discount_end_date', '');
         if (!empty($end_date) && $current_date > $end_date) {
             return false;
         }

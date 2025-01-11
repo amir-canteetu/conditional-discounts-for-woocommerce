@@ -4,7 +4,6 @@ namespace Supreme\ConditionalDiscounts;
 
 use Supreme\ConditionalDiscounts\Loader;
 use Supreme\ConditionalDiscounts\Admin\Admin;
-use Supreme\ConditionalDiscounts\Admin\SettingsPage;
 use Supreme\ConditionalDiscounts\Discounts\DiscountHandler;
 
 

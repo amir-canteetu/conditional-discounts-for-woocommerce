@@ -21,16 +21,16 @@ class ProductDiscount implements DiscountInterface {
 
     public function __construct() {
 
-        $this->endDate                  = get_option('cd_product_discount_end_date');   
-        $this->startDate                = get_option('cd_product_discount_start_date');
-        $this->discountValue            = (float) get_option('cd_product_discount_value', 0);
-        $this->minCartTotal             = (float) get_option('cd_product_minimum_cart_total');
-        $this->discountType             = get_option('cd_product_discount_type', 'percentage');
-        $this->discountLabel            = get_option('cd_product_discount_label', 'Product Discount');   
-        $this->enableDiscounts          = get_option('cd_enable_product_discounts');
-        $this->minCartQuantity          = (int) get_option('cd_product_min_cart_quantity');  
-        $this->discounted_products      = get_option('cd_select_discounted_products', []);
-        $this->discounted_categories    = get_option('cd_select_discounted_categories', []); 
+        $this->endDate                  = get_option('cdwc_product_discount_end_date');   
+        $this->startDate                = get_option('cdwc_product_discount_start_date');
+        $this->discountValue            = (float) get_option('cdwc_product_discount_value', 0);
+        $this->minCartTotal             = (float) get_option('cdwc_product_minimum_cart_total');
+        $this->discountType             = get_option('cdwc_product_discount_type', 'percentage');
+        $this->discountLabel            = get_option('cdwc_product_discount_label', 'Product Discount');   
+        $this->enableDiscounts          = get_option('cdwc_enable_product_discounts');
+        $this->minCartQuantity          = (int) get_option('cdwc_product_min_cart_quantity');  
+        $this->discounted_products      = get_option('cdwc_select_discounted_products', []);
+        $this->discounted_categories    = get_option('cdwc_select_discounted_categories', []); 
         
     }    
 
