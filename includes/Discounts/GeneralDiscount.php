@@ -6,16 +6,22 @@ use WC_Cart;
 
 class GeneralDiscount implements DiscountInterface {
 
-    private float $percentage;  
+    private float $discountValue;  
     private float $discountCap;  
     private string $discountType;  
     private string $discountLabel;  
+    private bool $combinability;
 
     public function __construct() {
-        $this->percentage   = (float) get_option('cd_general_discount_value');
-        $this->discountType = get_option('cd_general_discount_type', 'percentage');
-        $this->discountCap  = (float) get_option('cd_global_discount_cap');
-        $this->discountLabel  = get_option('cd_global_discount_label', 'Store-wide Discount');      
+        $this->discountValue    = (float) get_option('cd_general_discount_value');
+        $this->discountType     = get_option('cd_general_discount_type', 'percentage');
+        $this->discountCap      = (float) get_option('cd_global_discount_cap');
+        $this->discountLabel    = get_option('cd_global_discount_label', 'Store-wide Discount');      
+        $this->combinability    = get_option('cd_discount_combinability') == "yes" ? true : false;     
+    }
+
+    public function isEnabled( ): bool {
+            return get_option('cd_enable_general_discounts') == 'yes' ? true : false;
     }
 
     /**
@@ -59,13 +65,13 @@ public function calculateDiscount(WC_Cart $cart): float {
         $discount = 0.0;
 
         if ($this->discountType === 'percentage') {
-            $discount = $cartTotal * ($this->percentage / 100);
+            $discount = $cartTotal * ($this->discountValue / 100);
 
             if ($this->discountCap > 0) {
                 $discount = min($discount, $this->discountCap);
             }
         } elseif ($this->discountType === 'fixed') {
-            $discount = $this->fixedAmount;
+            $discount = $this->discountValue;
 
             // Ensure fixed discount does not exceed cart total
             $discount = min($discount, $cartTotal);
@@ -114,13 +120,20 @@ public function calculateDiscount(WC_Cart $cart): float {
         if ($this->discountType === 'percentage') {
             return sprintf(
                 __('%s%% off for carts over $100.', 'conditional-discounts'),
-                $this->percentage
+                $this->discountValue
             );
         }
 
         return sprintf(
             __('$%s off for carts over $100.', 'conditional-discounts'),
-            number_format($this->fixedAmount, 2)
+            number_format($this->discountValue, 2)
         );
     }
+
+
+    public function isCombinable(): bool {
+        return $this->combinability;
+    }
+
+    
 }

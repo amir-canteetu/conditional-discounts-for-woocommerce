@@ -76,8 +76,9 @@ class ProductDiscount implements DiscountInterface {
             $product_price      = $product->get_price();
             if ($product_price <= 0) { continue; }
             $quantity           = $cart_item['quantity'];
-            $is_eligible        = in_array($product_id, $this->discounted_products, true) || array_intersect($this->discounted_categories, $product_categories);
 
+            $is_eligible        = in_array($product_id, $this->discounted_products) || array_intersect($this->discounted_categories, $product_categories);
+            
             if ($is_eligible) {
                 if ($this->discountType === 'percentage') {
                     $discount = ($product_price * $this->discountValue / 100) * $quantity;
@@ -87,7 +88,7 @@ class ProductDiscount implements DiscountInterface {
                 $total_discount += $discount;
             }
         }
-
+        
         return $total_discount;
     }    
 

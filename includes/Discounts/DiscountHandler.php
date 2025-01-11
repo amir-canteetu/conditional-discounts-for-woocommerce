@@ -38,12 +38,42 @@ class DiscountHandler {
      * @param WC_Cart $cart The WooCommerce cart object.
      */
     public function applyDiscounts(WC_Cart $cart): void {
+        $generalDiscount = null;
+
+        // Identify the GeneralDiscount object
         foreach ($this->discounts as $discount) {
-            if ($discount instanceof DiscountInterface && $discount->validate($cart)) {
-                $discount->apply($cart);
+            if ($discount instanceof GeneralDiscount) {
+                $generalDiscount = $discount;
+                break;
+            }
+        }
+
+        // Check GeneralDiscount's status and combinability
+        if ($generalDiscount && $generalDiscount->isEnabled()) {
+            if ($generalDiscount->isCombinable()) {
+                // Apply GeneralDiscount and others
+                foreach ($this->discounts as $discount) {
+                    if ($discount->validate($cart)) {
+                        $discount->apply($cart);
+                    }
+                }
+            } else {
+                // Apply only GeneralDiscount and exit
+                if ($generalDiscount->validate($cart)) {
+                    $generalDiscount->apply($cart);
+                }
+                return;
+            }
+        } else {
+            // Apply other discounts when GeneralDiscount is not enabled
+            foreach ($this->discounts as $discount) {
+                if (!($discount instanceof GeneralDiscount) && $discount->validate($cart)) {
+                    $discount->apply($cart);
+                }
             }
         }
     }
+    
 
 
 }

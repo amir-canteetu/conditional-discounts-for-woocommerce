@@ -8,8 +8,8 @@ class CartDiscount implements DiscountInterface {
 
     private string $endDate;  
     private string $startDate;  
-    private float $percentage;  
-    private float $discountCap;  
+    private float   $discountValue;  
+    private float   $discountCap;  
     private string $minCartTotal;  
     private string $maxCartTotal;     
     private string $discountType;  
@@ -21,7 +21,7 @@ class CartDiscount implements DiscountInterface {
 
         $this->endDate              = get_option('cd_cart_discount_end_date', '');   
         $this->startDate            = get_option('cd_cart_discount_start_date', '');
-        $this->percentage           = (float) get_option('cd_cart_discount_value');
+        $this->discountValue        = (float) get_option('cd_cart_discount_value');
         $this->discountCap          = (float) get_option('cd_global_discount_cap');
         $this->minCartTotal         = floatval(get_option('cd_minimum_cart_total', 0));
         $this->discountType         = get_option('cd_cart_discount_type', 'percentage');
@@ -67,9 +67,9 @@ class CartDiscount implements DiscountInterface {
         $calculatedDiscount = 0.0;
     
         if ($this->discountType === 'percentage') {
-            $calculatedDiscount = ($cartSubtotal * $this->percentage) / 100;
+            $calculatedDiscount = ($cartSubtotal * $this->discountValue) / 100;
         } elseif ($this->discountType === 'fixed') {
-            $calculatedDiscount = $this->percentage;
+            $calculatedDiscount = $this->discountValue;
         }
     
         $calculatedDiscount = min($calculatedDiscount, $cartSubtotal);
