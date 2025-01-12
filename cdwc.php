@@ -14,7 +14,6 @@ $constants = [
     'CDWC_PLUGIN_FILE'   => __FILE__,
     'CDWC_PLUGIN_DIR'    => plugin_dir_path(__FILE__),
     'CDWC_PLUGIN_URL'    => plugin_dir_url(__FILE__),
-    'CDWC_PLUGIN_VERSION' => '1.0.0',
 ];
 
 foreach ($constants as $name => $value) {
@@ -23,23 +22,26 @@ foreach ($constants as $name => $value) {
     }
 }
 
+$plugin_data = get_file_data(__FILE__, ['Version' => 'Version'], 'plugin');
+define('CDWC_PLUGIN_VERSION', $plugin_data['Version']);
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-function activate_cdwc() {
+function cdwc_activate_plugin() {
     Supreme\ConditionalDiscounts\Activator::activate();
 }
 
-function deactivate_cdwc() {
+function cdwc_deactivate_plugin() {
 	Supreme\ConditionalDiscounts\DeActivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_cdwc' );
-register_deactivation_hook( __FILE__, 'deactivate_cdwc' );
+register_activation_hook( __FILE__, 'cdwc_activate_plugin' );
+register_deactivation_hook( __FILE__, 'cdwc_deactivate_plugin' );
 
 function cdwc_load_textdomain() {
     load_plugin_textdomain('cdwc', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
-add_action('plugins_loaded', 'cdwc_load_textdomain');
+add_action('init', 'cdwc_load_textdomain');
 
 function cdwc_initialize_plugin() {
     Supreme\ConditionalDiscounts\Plugin::instance()->run(); //loader->run();

@@ -15,10 +15,8 @@ class Plugin {
 
     public function __construct() {
         $this->loader = new Loader();
-        
         $this->define_admin_filter_hooks(); 
         $this->define_admin_action_hooks();  
-        $this->define_public_hooks();  
         $this->initialize_services();
     }
 
@@ -48,18 +46,6 @@ class Plugin {
     private function define_admin_action_hooks() {
         $this->loader->add_action('admin_enqueue_scripts', [new Admin(), 'cdwc_enqueue_admin_scripts']);
     }    
-    
-
-
-    /**
-     * Register all of the hooks related to the public-facing functionality
-     * of the plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     */
-    private function define_public_hooks() {
-    } 
 
     public function run() {
         $this->loader->run();
