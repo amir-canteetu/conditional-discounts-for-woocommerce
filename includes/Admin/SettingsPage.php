@@ -2,7 +2,8 @@
 
 namespace Supreme\ConditionalDiscounts\Admin;
 
-use \WC_Settings_Page;
+use WC_Settings_Page;
+use WC_Admin_Settings;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -26,7 +27,8 @@ if (!defined('ABSPATH')) {
             $this->label = __('Conditional Discounts', 'cdwc');
 
             add_filter('woocommerce_get_sections_' . $this->id, [$this, 'get_sections']);
-            add_filter('woocommerce_get_settings_' . $this->id, [$this, 'get_settings'], 10, 2);     
+            add_filter('woocommerce_get_settings_' . $this->id, [$this, 'get_settings'], 10, 2);  
+            add_filter('woocommerce_admin_settings_sanitize_option', [$this, 'validate_fields_by_type'], 10, 3);   
             
             parent::__construct();
         } 
@@ -96,6 +98,25 @@ if (!defined('ABSPATH')) {
                     'type'     => 'checkbox',
                 ],
                 [
+                    'title'    => __('Minimum Cart Total', 'conditional-discounts'),
+                    'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts'),
+                    'id'       => 'cdwc_general_discounts_minimum_cart_total',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
+                ],
+                [
+                    'title'    => __('Minimum Cart Quantity', 'cdwc'),
+                    'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'cdwc'),
+                    'id'       => 'cdwc_general_discounts_minimum_cart_quantity',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => true,
+                    'custom_attributes' => [
+                        'min' => '0',
+                    ],
+                ],                
+                [
                     'title'    => __('Discount Type', 'conditional-discounts'),
                     'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts'),
                     'id'       => 'cdwc_general_discount_type',
@@ -121,14 +142,14 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Discount Combinability', 'conditional-discounts'),
                     'desc'     => __('Allow this discount to combine with other discounts.', 'conditional-discounts'),
-                    'id'       => 'cdwc_discount_combinability',
+                    'id'       => 'cdwc_general_discounts_combinability',
                     'default'  => 'yes',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Global Discount Cap', 'conditional-discounts'),
                     'desc'     => __('Set a maximum discount amount for all discounts.', 'conditional-discounts'),
-                    'id'       => 'cdwc_global_discount_cap',
+                    'id'       => 'cdwc_general_discounts_discount_cap',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => __('Enter a maximum discount value, e.g., 50 for $50. Leave blank to disable.', 'conditional-discounts'),
@@ -136,7 +157,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Global Discount Label', 'conditional-discounts'),
                     'desc'     => __('Set a label for this discount.', 'conditional-discounts'),
-                    'id'       => 'cdwc_global_discount_label',
+                    'id'       => 'cdwc_general_discounts_discount_label',
                     'default'  => 'Store-wide Discount',
                     'type'     => 'text',
                     'desc_tip' => __('Enter discount label.', 'conditional-discounts'),
@@ -175,19 +196,19 @@ if (!defined('ABSPATH')) {
                     'title'    => __('Cart-Based Discounts', 'conditional-discounts'),
                     'type'     => 'title',
                     'desc'     => __('Set up discounts based on the contents of the shopping cart.', 'conditional-discounts'),
-                    'id'       => 'cdwc_cart_based_discounts_section',
+                    'id'       => 'cdwc_cart_discount_section',
                 ],
                 [
                     'title'    => __('Enable Cart-Based Discounts', 'conditional-discounts'),
                     'desc'     => __('Enable or disable cart-based discounts for your store.', 'conditional-discounts'),
-                    'id'       => 'cdwc_enable_cart_discounts',
+                    'id'       => 'cdwc_cart_discount_enable',
                     'default'  => 'no',
                     'type'     => 'checkbox',
                 ],
                 [
                     'title'    => __('Minimum Cart Total', 'conditional-discounts'),
                     'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts'),
-                    'id'       => 'cdwc_minimum_cart_total',
+                    'id'       => 'cdwc_cart_discount_minimum_cart_total',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts'),
@@ -195,7 +216,7 @@ if (!defined('ABSPATH')) {
                 [
                     'title'    => __('Minimum Cart Quantity', 'cdwc'),
                     'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'cdwc'),
-                    'id'       => 'cdwc_cart_quantity_discount',
+                    'id'       => 'cdwc_cart_discount_minimum_cart_quantity',
                     'default'  => '',
                     'type'     => 'number',
                     'desc_tip' => true,
@@ -269,7 +290,7 @@ if (!defined('ABSPATH')) {
                     'title'    => __('Product-Based Discounts', 'conditional-discounts'),
                     'type'     => 'title',
                     'desc'     => __('Set up discounts based on specific products or product categories.', 'conditional-discounts'),
-                    'id'       => 'cdwc_product_based_discounts_section',
+                    'id'       => 'cdwc_product_discount_section',
                 ],
                 [
                     'title'    => __('Enable Product-Based Discounts', 'conditional-discounts'),
@@ -387,7 +408,18 @@ if (!defined('ABSPATH')) {
             }
             return $options;
         }
-        
+
+        public function validate_fields_by_type($value, $option, $raw_value) {
+            switch ($option['type']) {
+                case 'date':
+                    if (empty($raw_value)) {
+                        WC_Admin_Settings::add_error( __('Date fields are required.', 'cdwc') );
+                        $value = '';
+                    }                                      
+            }
+            return $value;
+        }
+     
     }
 
     return new SettingsPage();

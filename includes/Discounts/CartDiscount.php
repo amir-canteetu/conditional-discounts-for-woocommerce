@@ -22,12 +22,12 @@ class CartDiscount implements DiscountInterface {
         $this->endDate              = get_option('cdwc_cart_discount_end_date', '');   
         $this->startDate            = get_option('cdwc_cart_discount_start_date', '');
         $this->discountValue        = (float) get_option('cdwc_cart_discount_value');
-        $this->discountCap          = (float) get_option('cdwc_global_discount_cap');
-        $this->minCartTotal         = floatval(get_option('cdwc_minimum_cart_total', 0));
+        $this->discountCap          = (float) get_option('cdwc_general_discounts_discount_cap');
+        $this->minCartTotal         = floatval(get_option('cdwc_cart_discount_minimum_cart_total', 0));
         $this->discountType         = get_option('cdwc_cart_discount_type', 'percentage');
         $this->discountLabel        = get_option('cdwc_cart_discount_label', 'Cart Discount');   
-        $this->enableDiscounts      = get_option('cdwc_enable_cart_discounts', 'no') === 'yes';
-        $this->minCartQuantity      = intval(get_option('cdwc_cart_quantity_discount', 0));   
+        $this->enableDiscounts      = get_option('cdwc_cart_discount_enable', 'no') === 'yes';
+        $this->minCartQuantity      = intval(get_option('cdwc_cart_discount_minimum_cart_quantity', 0));   
     }
 
     public function isApplicable(WC_Cart $cart): bool {

@@ -11,13 +11,18 @@ class GeneralDiscount implements DiscountInterface {
     private string $discountType;  
     private string $discountLabel;  
     private bool $combinability;
+    private string $minCartTotal;  
+    private string $maxCartTotal;  
 
     public function __construct() {
         $this->discountValue    = (float) get_option('cdwc_general_discount_value');
         $this->discountType     = get_option('cdwc_general_discount_type', 'percentage');
-        $this->discountCap      = (float) get_option('cdwc_global_discount_cap');
-        $this->discountLabel    = get_option('cdwc_global_discount_label', 'Store-wide Discount');      
-        $this->combinability    = get_option('cdwc_discount_combinability') == "yes" ? true : false;     
+        $this->discountCap      = (float) get_option('cdwc_general_discounts_discount_cap');
+        $this->discountLabel    = get_option('cdwc_general_discounts_discount_label', 'Store-wide Discount');      
+        $this->combinability    = get_option('cdwc_general_discounts_combinability') == "yes" ? true : false;  
+        $this->minCartTotal     = floatval(get_option('cdwc_general_discounts_minimum_cart_total', 0));
+        $this->minCartQuantity  = intval(get_option('cdwc_general_discounts_minimum_cart_quantity', 0));   
+
     }
 
     public function isEnabled( ): bool {
@@ -36,6 +41,17 @@ class GeneralDiscount implements DiscountInterface {
         if ($enable_general_discounts !== 'yes') {
             return false;
         }
+
+        $cartTotal = $cart->get_subtotal();
+
+        if ($cartTotal < $this->minCartTotal) {
+            return false;
+        }
+
+        $cartQuantity = $cart->get_cart_contents_count();
+        if ($cartQuantity < $this->minCartQuantity) {
+            return false;
+        }        
     
         $current_date = current_time('Y-m-d');
     
