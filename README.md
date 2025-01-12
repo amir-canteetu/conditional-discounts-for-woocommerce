@@ -1,6 +1,6 @@
 # Conditional Discounts for WooCommerce Plugin
 
-Welcome to the **Conditional Discounts for WooCommerce Plugin**! This plugin is designed to simplify creating and managing discounts for your WooCommerce store. You can configure general, cart-based, and product-specific discounts to maximize your store's potential.
+The **Conditional Discounts for WooCommerce Plugin** plugin is designed to simplify creating and managing discounts for your WooCommerce store. You can configure general, cart-based, and product-specific discounts to maximize your store's potential.
 
 ## Features
 
@@ -8,13 +8,15 @@ Welcome to the **Conditional Discounts for WooCommerce Plugin**! This plugin is 
 
 - **Enable/Disable General Discounts**: Apply discounts globally across your store.
 - **Minimum Cart Total Requirement**: Set thresholds to activate discounts.
+- **Minimum Cart Quantity Requirement**: Set quantity thresholds to activate discounts.
 - **Discount Types**: Choose between percentage-based or fixed-amount discounts.
 - **Custom Discount Labels**: Display custom text to explain the applied discount.
+- **Flexible Discount Periods**: Configure start and end dates for limited-time offers.
 
 ### Cart-Based Discounts
 
 - **Threshold Discounts**: Offer discounts based on cart totals or item quantities.
-- **Flexible Discount Periods**: Configure start and end dates for limited-time offers.
+- **Flexible Discount Periods**: Configure start and end dates for limited-time cart-based offers.
 - **Customizable Labels**: Add clear descriptions for cart discounts.
 
 ### Product-Specific Discounts
@@ -22,6 +24,7 @@ Welcome to the **Conditional Discounts for WooCommerce Plugin**! This plugin is 
 - **Product and Category Discounts**: Target specific products or categories.
 - **Advanced Selectors**: Use enhanced selectors for easy product and category assignment.
 - **Scalable Rules**: Define minimum quantities or amounts to qualify for discounts.
+- **Flexible Discount Periods**: Configure start and end dates for limited-time product-based offers.
 
 ## Installation
 
@@ -43,11 +46,13 @@ Welcome to the **Conditional Discounts for WooCommerce Plugin**! This plugin is 
 
 ## Screenshots
 
-![Genral Discounts](./assets/screenshots/General-Discounts.png)
+![General Discounts](./assets/screenshots/screenshot-1.png)
 
-![Genral Discounts](./assets/screenshots/Cart-Discounts.png)
+![Cart Discounts](./assets/screenshots/screenshot-2.png)
 
-![Genral Discounts](./assets/screenshots/Product-Discounts.png)
+![Product Discounts](./assets/screenshots/screenshot-3.png)
+
+![Cart Page with Discount Applied](./assets/screenshots/screenshot-4.png)
 
 ## Frequently Asked Questions
 
@@ -57,7 +62,7 @@ You can create percentage-based or fixed-amount discounts that apply globally, t
 
 ### 2. Can I set time-sensitive discounts?
 
-Yes, you can configure start and end dates for cart-based discounts.
+Yes, you can configure start and end dates for general, cart-based and product-based discounts.
 
 ### 3. How do I target specific products or categories?
 
@@ -65,7 +70,7 @@ Under **Product Discounts**, use the enhanced selectors to choose products or ca
 
 ### 4. Can I disable discounts temporarily?
 
-Yes, you can enable or disable discounts for each section independently.
+Yes, you can enable or disable discounts for each section independently. Discounts can be used in combination.
 
 ## Changelog
 
