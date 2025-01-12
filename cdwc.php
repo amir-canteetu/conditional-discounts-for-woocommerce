@@ -10,21 +10,24 @@
 
 defined('ABSPATH') || exit;
 
+// Define constants for plugin paths and URLs
 $constants = [
-    'CDWC_PLUGIN_FILE'   => __FILE__,
-    'CDWC_PLUGIN_DIR'    => plugin_dir_path(__FILE__),
-    'CDWC_PLUGIN_URL'    => plugin_dir_url(__FILE__),
+    'CDWC_PLUGIN_FILE'   => __FILE__,                          // Path to the main plugin file
+    'CDWC_PLUGIN_DIR'    => plugin_dir_path(__FILE__),         // Absolute directory path of the plugin
+    'CDWC_PLUGIN_URL'    => plugin_dir_url(__FILE__),          // URL to the plugin directory
 ];
-
+// Define constants only if they are not already defined
 foreach ($constants as $name => $value) {
     if (!defined($name)) {
         define($name, $value);
     }
 }
 
+// Retrieve the plugin version dynamically from the plugin header
 $plugin_data = get_file_data(__FILE__, ['Version' => 'Version'], 'plugin');
 define('CDWC_PLUGIN_VERSION', $plugin_data['Version']);
 
+// Autoload classes using Composer's autoloader
 require_once __DIR__ . '/vendor/autoload.php';
 
 function cdwc_activate_plugin() {
