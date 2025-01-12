@@ -34,10 +34,4 @@ interface DiscountInterface {
      */
     public function apply(WC_Cart $cart): void;
 
-    /**
-     * Returns the name or description of the discount.
-     *
-     * @return string The discount name or description.
-     */
-    public function getDescription(): string;
 }

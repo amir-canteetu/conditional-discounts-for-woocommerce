@@ -20,7 +20,7 @@ class Admin {
      */
     public function cdwc_add_settings_link( $links ) {
 
-        $settings_link = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=conditional_discounts&section' ) . '">' . __( 'Settings', 'conditional-discounts' ) . '</a>';
+        $settings_link = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=conditional_discounts&section' ) . '">' . __( 'Settings', 'cdwc' ) . '</a>';
         array_unshift( $links, $settings_link );
 
         return $links;

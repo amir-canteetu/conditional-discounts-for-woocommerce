@@ -92,13 +92,4 @@ class ProductDiscount implements DiscountInterface {
         return $total_discount;
     }    
 
-    public function getDescription(): string {
-        return sprintf(
-            __('%s %s discount for eligible products.', 'cdwc'),
-            $this->discountValue,
-            $this->discountType === 'percentage' ? '%' : '$'
-        );
-    }
-
-
 }

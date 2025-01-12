@@ -110,7 +110,7 @@ public function calculateDiscount(WC_Cart $cart): float {
         $discountAmount = $this->calculateDiscount($cart);
         if ($discountAmount > 0) {
             $cart->add_fee(
-                __($this->discountLabel, 'conditional-discounts'),
+                __($this->discountLabel, 'cdwc'),
                 -$discountAmount  
             );
         }
@@ -125,25 +125,6 @@ public function calculateDiscount(WC_Cart $cart): float {
     public function validate(WC_Cart $cart): bool {
          
         return $this->isApplicable($cart);
-    }
-
-    /**
-     * Provides a description of the discount.
-     *
-     * @return string
-     */
-    public function getDescription(): string {
-        if ($this->discountType === 'percentage') {
-            return sprintf(
-                __('%s%% off for carts over $100.', 'conditional-discounts'),
-                $this->discountValue
-            );
-        }
-
-        return sprintf(
-            __('$%s off for carts over $100.', 'conditional-discounts'),
-            number_format($this->discountValue, 2)
-        );
     }
 
 
