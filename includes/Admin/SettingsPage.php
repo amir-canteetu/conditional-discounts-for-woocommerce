@@ -148,7 +148,7 @@ if (!defined('ABSPATH')) {
                 ],
                 [
                     'title'    => __('Global Discount Cap', 'cdwc'),
-                    'desc'     => __('Set a maximum discount amount for all discounts.', 'cdwc'),
+                    'desc'     => __('Set a maximum discount amount for this discount.', 'cdwc'),
                     'id'       => 'cdwc_general_discounts_discount_cap',
                     'default'  => '',
                     'type'     => 'number',

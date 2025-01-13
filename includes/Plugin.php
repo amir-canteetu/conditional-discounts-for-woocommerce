@@ -38,8 +38,8 @@ class Plugin {
             $settings[] = include __DIR__ . '/Admin/SettingsPage.php';
             return $settings;        
         });
-
-        $this->loader->add_filter('plugin_action_links_conditional-discounts-for-woocommerce/cdwc.php', [new Admin(), 'cdwc_add_settings_link']);
+        \write_log('/includes/Plugin.php:define_admin_filter_hooks:41');
+        $this->loader->add_filter('plugin_action_links_cdwc/cdwc.php', [new Admin(), 'cdwc_add_settings_link']);
     }
    
 
