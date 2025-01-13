@@ -10,11 +10,13 @@ use Supreme\ConditionalDiscounts\Discounts\DiscountHandler;
 class Plugin {
 
     private $loader;
+    private $admin;
 
     private static ?Plugin $instance = null;
 
     public function __construct() {
         $this->loader = new Loader();
+        $this->admin = new Admin();
         $this->define_admin_filter_hooks(); 
         $this->define_admin_action_hooks();  
         $this->initialize_services();
@@ -35,16 +37,16 @@ class Plugin {
     private function define_admin_filter_hooks() {
 
         $this->loader->add_filter('woocommerce_get_settings_pages', function($settings){
-            $settings[] = include __DIR__ . '/Admin/SettingsPage.php';
+            $settings[] = include CDWC_PLUGIN_DIR . 'includes/Admin/SettingsPage.php';
             return $settings;        
         });
-        \write_log('/includes/Plugin.php:define_admin_filter_hooks:41');
-        $this->loader->add_filter('plugin_action_links_cdwc/cdwc.php', [new Admin(), 'cdwc_add_settings_link']);
+        
+        $this->loader->add_filter('plugin_action_links_cdwc/cdwc.php', [$this->admin, 'cdwc_add_settings_link']);
     }
    
 
     private function define_admin_action_hooks() {
-        $this->loader->add_action('admin_enqueue_scripts', [new Admin(), 'cdwc_enqueue_admin_scripts']);
+        $this->loader->add_action('admin_enqueue_scripts', [$this->admin, 'cdwc_enqueue_admin_scripts']);
     }    
 
     public function run() {
