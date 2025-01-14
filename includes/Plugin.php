@@ -41,7 +41,7 @@ class Plugin {
             return $settings;        
         });
         
-        $this->loader->add_filter('plugin_action_links_cdwc/cdwc.php', [$this->admin, 'cdwc_add_settings_link']);
+        $this->loader->add_filter('plugin_action_links_conditional-discounts-for-woocommerce/conditional-discounts-for-woocommerce.php', [$this->admin, 'cdwc_add_settings_link']);
     }
    
 
