@@ -109,10 +109,7 @@ public function calculateDiscount(WC_Cart $cart): float {
     public function apply($cart): void {
         $discountAmount = $this->calculateDiscount($cart);
         if ($discountAmount > 0) {
-            $cart->add_fee(
-                __($this->discountLabel, 'cdwc'),
-                -$discountAmount  
-            );
+            $cart->add_fee( $this->discountLabel, -$discountAmount );
         }
     }
 

@@ -85,7 +85,8 @@ class CartDiscount implements DiscountInterface {
         $discount_value = $this->calculateDiscount($cart);
 
         if ($discount_value > 0) {
-            $cart->add_fee(__($this->discountLabel, 'cdwc'), -$discount_value);
+            /* translators: %s: Discount label for front-end */
+            $cart->add_fee( $this->discountLabel, -$discount_value);
         }
     }
 
@@ -100,7 +101,7 @@ class CartDiscount implements DiscountInterface {
     }
 
     public function getDescription(): string {
-        return __('Cart discount based on cart total.', 'cdwc');
+        return __('Cart discount based on cart total.', 'conditional-discounts-for-woocommerce');
     }
 
 }

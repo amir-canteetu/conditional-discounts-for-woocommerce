@@ -24,7 +24,7 @@ class Admin {
             'page' => 'wc-settings',
             'tab'  => 'conditional_discounts',
             'section' => '',
-        ], admin_url('admin.php'))) . '">' . esc_html__('Settings', 'cdwc') . '</a>';
+        ], admin_url('admin.php'))) . '">' . esc_html__('Settings', 'conditional-discounts-for-woocommerce') . '</a>';
 
         // Add the settings link to the beginning of the links array.
         array_unshift($links, $settings_link);

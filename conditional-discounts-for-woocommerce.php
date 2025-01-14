@@ -4,7 +4,7 @@
  * Description: A plugin to create cart-based conditional discounts.
  * Version: 1.0.0
  * Author: Amir Candido
- * Text Domain: cdwc
+ * Text Domain: conditional-discounts-for-woocommerce
  * Domain Path: /languages
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -44,7 +44,7 @@ register_activation_hook( __FILE__, 'cdwc_activate_plugin' );
 register_deactivation_hook( __FILE__, 'cdwc_deactivate_plugin' );
 
 function cdwc_load_textdomain() {
-    load_plugin_textdomain('cdwc', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('conditional-discounts-for-woocommerce', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 add_action('init', 'cdwc_load_textdomain');
 

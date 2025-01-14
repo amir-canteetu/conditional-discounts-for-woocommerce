@@ -56,7 +56,7 @@ class ProductDiscount implements DiscountInterface {
         $discount_value = $this->calculateDiscount($cart);
 
         if ($discount_value > 0) {
-            $cart->add_fee(__($this->discountLabel, 'cdwc'), -$discount_value);
+            $cart->add_fee( $this->discountLabel, -$discount_value );
         }
     }
     
