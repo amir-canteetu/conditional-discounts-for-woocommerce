@@ -46,6 +46,7 @@ if (!defined('ABSPATH')) {
                 ''                => __('General', 'conditional-discounts-for-woocommerce'),
                 'cart_discounts'  => __('Cart Discounts', 'conditional-discounts-for-woocommerce'),
                 'product_discounts' => __('Product Discounts', 'conditional-discounts-for-woocommerce'),
+                'user_discounts' => __('User Discounts', 'conditional-discounts-for-woocommerce'),
             ];
         }
 
@@ -68,6 +69,10 @@ if (!defined('ABSPATH')) {
                 case 'product_discounts':
                     $settings = $this->get_product_discount_settings();
                     break;
+
+                case 'user_discounts':
+                    $settings = $this->get_user_discount_settings();
+                    break;                    
 
                 default:
                     $settings = $this->get_general_settings();
@@ -277,6 +282,120 @@ if (!defined('ABSPATH')) {
                 ],
             ];
         }
+
+        /**
+         * User Discount Settings
+         *
+         * @return array
+         */
+        private function get_user_discount_settings() {
+
+
+            global $wp_roles; // Access global roles object to retrieve available roles.
+            $roles = $wp_roles->roles; // Get all roles.
+            $role_options = []; // Prepare role options.
+        
+            // Populate role options with role names and labels.
+            foreach ($roles as $role_key => $role_data) {
+                $role_options[$role_key] = $role_data['name'];
+            }            
+
+            return [
+                [
+                    'title'    => __('User-Based Discounts', 'conditional-discounts-for-woocommerce'),
+                    'type'     => 'title',
+                    'desc'     => __('Set up discounts based on the user role.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_section',
+                ],
+                [
+                    'title'    => __('Enable User-Based Discounts', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Enable or disable user-based discounts for your store.','conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_enable',
+                    'default'  => 'no',
+                    'type'     => 'checkbox',
+                ],
+                [
+                    'title'    => __('Applicable User Roles', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Select the user roles eligible for this discount.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_roles',
+                    'default'  => '',
+                    'type'     => 'multiselect',
+                    'class'    => 'wc-enhanced-select',
+                    'options'  => $role_options, // Add dynamically populated roles.
+                    'desc_tip' => __('Hold Ctrl (or Cmd on Mac) to select multiple roles.', 'conditional-discounts-for-woocommerce'),
+                ],                
+                [
+                    'title'    => __('Minimum Cart Total', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Set a minimum cart total required for the discount to apply.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_minimum_cart_total',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => __('Enter a value in your store\'s currency.', 'conditional-discounts-for-woocommerce'),
+                ],
+                [
+                    'title'    => __('Minimum Cart Quantity', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Apply discount when the number of items in the cart exceeds this value.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_minimum_cart_quantity',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => true,
+                    'custom_attributes' => [
+                        'min' => '0',
+                    ],
+                ],
+                [
+                    'title'    => __('Discount Type', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Choose whether the discount is a percentage or a fixed amount.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_type',
+                    'default'  => 'percentage',
+                    'type'     => 'select',
+                    'options'  => [
+                        'percentage' => __('Percentage', 'conditional-discounts-for-woocommerce'),
+                        'fixed'      => __('Fixed Amount', 'conditional-discounts-for-woocommerce'),
+                    ],
+                ],
+                [
+                    'title'    => __('Discount Value', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Enter the discount value.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_value',
+                    'default'  => '',
+                    'type'     => 'number',
+                    'desc_tip' => true,
+                    'custom_attributes' => [
+                        'min' => '0',
+                        'step' => '0.01',
+                    ],
+                ],                  
+                [
+                    'title'    => __('User Discount Label', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Set a label for this discount.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_label',
+                    'default'  => 'User Discount',
+                    'type'     => 'text',
+                    'desc_tip' => __('Enter discount label.', 'conditional-discounts-for-woocommerce'),
+                ],                         
+                [
+                    'title'    => __('User Discount Validity Start Date', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Set the start date for the discount validity.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_start_date',
+                    'default'  => '',
+                    'type'     => 'date',
+                    'desc_tip' => __('Select the starting date for the discount to be valid.', 'conditional-discounts-for-woocommerce'),
+                ],
+                [
+                    'title'    => __('User Discount Validity End Date', 'conditional-discounts-for-woocommerce'),
+                    'desc'     => __('Set the end date for the discount validity.', 'conditional-discounts-for-woocommerce'),
+                    'id'       => 'cdwc_user_discount_end_date',
+                    'default'  => '',
+                    'type'     => 'date',
+                    'desc_tip' => __('Select the ending date for the discount to be valid.', 'conditional-discounts-for-woocommerce'),
+                ],            
+                [
+                    'type'     => 'sectionend',
+                    'id'       => 'cdwc_user_based_discounts_section',
+                ],
+            ];
+        }        
     
 
         /**
