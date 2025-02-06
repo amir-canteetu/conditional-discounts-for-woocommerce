@@ -33,7 +33,7 @@ define('CDWC_PLUGIN_VERSION', $plugin_data['Version']);
 require_once __DIR__ . '/vendor/autoload.php';
 
 function cdwc_activate_plugin() {
-    Supreme\ConditionalDiscounts\Activator::activate();
+    (new Supreme\ConditionalDiscounts\Activator())->activate();
 }
 
 function cdwc_deactivate_plugin() {
@@ -47,6 +47,8 @@ function cdwc_load_textdomain() {
     load_plugin_textdomain('conditional-discounts-for-woocommerce', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 add_action('init', 'cdwc_load_textdomain');
+
+register_activation_hook(__FILE__, ['Supreme\ConditionalDiscounts\Db', 'create_table_multisite']);
 
 function cdwc_initialize_plugin() {
     Supreme\ConditionalDiscounts\Plugin::instance()->run(); //loader->run();

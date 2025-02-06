@@ -5,6 +5,8 @@ namespace Supreme\ConditionalDiscounts;
 use Supreme\ConditionalDiscounts\Loader;
 use Supreme\ConditionalDiscounts\Admin\Admin;
 use Supreme\ConditionalDiscounts\Discounts\DiscountHandler;
+use Supreme\ConditionalDiscounts\PostTypes\ShopDiscountType;
+use Supreme\ConditionalDiscounts\Admin\DiscountListTable;
 
 
 class Plugin {
@@ -15,12 +17,13 @@ class Plugin {
     private static ?Plugin $instance = null;
 
     public function __construct() {
-        $this->loader = new Loader();
-        $this->admin = new Admin();
+        $this->loader   = new Loader();
+        $this->admin    = new Admin();
         $this->define_admin_filter_hooks(); 
         $this->define_admin_action_hooks();  
+        $this->initialize_post_type();
         $this->initialize_services();
-    }
+    }   
 
     public static function instance(): Plugin {
         if (self::$instance === null) {
@@ -30,7 +33,12 @@ class Plugin {
         return self::$instance;
     }
 
-    private function initialize_services() {      
+    private function initialize_post_type() {      
+        (new ShopDiscountType());
+    }     
+
+    public function initialize_services() {    
+        (new DiscountListTable());
         (new DiscountHandler())->register();
     }
 

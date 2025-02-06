@@ -4,7 +4,7 @@ jQuery(document).ready(function ($) {
       ":checked"
     );
 
-    $(".form-table input")
+    $(".form-table input, .form-table select")
       .not("#cdwc_cart_discount_enable")
       .prop("disabled", !isCartDiscountsEnabled);
   }

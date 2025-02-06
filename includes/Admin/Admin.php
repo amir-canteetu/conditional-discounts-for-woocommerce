@@ -48,6 +48,7 @@ class Admin {
             '' => 'admin-general-discounts.js',          // General discounts
             'cart_discounts' => 'admin-cart-discounts.js',  // Cart discounts
             'product_discounts' => 'admin-product-discounts.js', // Product discounts
+            'user_discounts' => 'admin-user-discounts.js', // User discounts
         ];
     
         // Check if we are on the correct admin page and tab

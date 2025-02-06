@@ -1,27 +1,12 @@
 <?php
-// Exit if accessed directly
+
 if (!defined('WP_UNINSTALL_PLUGIN')) {
-    exit;
+    exit; // Exit if accessed directly
 }
 
-// Helper function to delete options by prefix
-function cdwc_delete_options_by_prefix($prefix) {
-    global $wpdb;
+require_once __DIR__ . "/includes/Db.php";
 
-    // Fetch all option names that start with the prefix
-    $options = $wpdb->get_col(
-        $wpdb->prepare(
-            "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-            $wpdb->esc_like($prefix) . '%'
-        )
-    );
+// Delete the custom table
+Supreme\ConditionalDiscounts\Db::delete_table_multisite();
+Supreme\ConditionalDiscounts\Db::delete_all_discounts();
 
-    // Delete each option
-    foreach ($options as $option) {
-        delete_option($option);
-    }
-
-}
-
-// Delete all options with the prefix "cdwc_"
-cdwc_delete_options_by_prefix('cdwc_');

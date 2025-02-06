@@ -2,6 +2,8 @@
 
 namespace Supreme\ConditionalDiscounts;
 
+use Supreme\ConditionalDiscounts\Db;
+
 class Activator {
 
 	/**
@@ -11,7 +13,12 @@ class Activator {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() {
+	public function activate() {
+		$this->checkForWC();
+                Db::create_table_multisite();
+	}
+        
+	public function checkForWC() {
 
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			// Deactivate the plugin
@@ -27,6 +34,6 @@ class Activator {
 			);
 		}		
 
-	}
+	} 
 
 }
