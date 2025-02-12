@@ -14,6 +14,7 @@
     }
   ],
   "require": {
-    "php-di/php-di": "^7.0"
+    "php-di/php-di": "^7.0",
+    "justinrainbow/json-schema": "^6.1"
   }
 }

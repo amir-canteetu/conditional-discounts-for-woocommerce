@@ -2,3 +2,4 @@ vendor
 tests
 notes
 /config.json
+node_modules

@@ -32,7 +32,7 @@ class ShopDiscountType {
             'show_ui'               => true,
             'show_in_menu'          => current_user_can( 'edit_others_shop_orders' ) ? 'woocommerce' : true,
             'publicly_queryable'    => false,
-            'supports'              => ['title', 'editor'],
+            'supports'              => ['title'],
             'has_archive'           => false,
             'show_in_rest'          => false,
             'rewrite'               => ['slug' => 'shop_discount'],

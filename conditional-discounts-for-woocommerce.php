@@ -51,6 +51,6 @@ add_action('init', 'cdwc_load_textdomain');
 register_activation_hook(__FILE__, ['Supreme\ConditionalDiscounts\Db', 'create_table_multisite']);
 
 function cdwc_initialize_plugin() {
-    Supreme\ConditionalDiscounts\Plugin::instance()->run(); //loader->run();
+    Supreme\ConditionalDiscounts\Bootstrap::instance()->run(); //loader->run();
 }
 add_action('plugins_loaded', 'cdwc_initialize_plugin');

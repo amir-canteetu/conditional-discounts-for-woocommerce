@@ -5,9 +5,61 @@ namespace Supreme\ConditionalDiscounts\Models;
 use DateTimeImmutable;
 use WC_Product;
 use InvalidArgumentException;
-use ConditionalDiscounts\DecisionEngine\RuleSet;
+use Supreme\ConditionalDiscounts\DecisionEngine\RuleSet;
 
-class DiscountModel
+/*Serves as the central data object and business rule validator for discounts.
+ * 
+Key Responsibilities
+Data Abstraction
+
+Encapsulates all discount-related data storage/retrieval
+
+Abstracts WordPress meta handling behind domain methods
+
+Provides type-safe access to properties (DateTimeImmutable for dates)
+
+Business Logic
+
+Implements core discount calculations (calculate_discount_amount())
+
+Manages product applicability rules (applies_to_product())
+
+Handles temporal validity checks (is_active())
+
+Validation & Sanitization
+
+Type validation for discount types
+
+Date format validation and normalization
+
+Input sanitization for numeric values
+
+Relationship Management
+
+Handles product/category/tag/role relationships
+
+Returns proper WC_Product objects for applicable products
+
+Manages exclusion lists
+
+Performance Optimization
+
+Lazy-loading of meta data
+
+Object caching of relationships
+
+Batch meta loading pattern
+
+Domain Object Integrity
+
+Immutable date objects
+
+Range checking for numeric values
+
+Default value handling
+ *  */
+
+class Discount
 {
     private int $id;
     private array $meta         = [];
@@ -50,10 +102,10 @@ class DiscountModel
         global $wpdb;
         $table_name                     = $wpdb->prefix . 'cdwc_discount_rules';
         $rules                          = $wpdb->get_row( $wpdb->prepare("SELECT rules FROM $table_name WHERE discount_id = %d", $this->id), ARRAY_A );
-        $this->meta                     = $rules ? json_decode($rules['rule_value'], true) : [];
-
+        $this->meta                     = $rules ? json_decode($rules['rules'], true) : [];
+        
         $this->enabled                  = ($this->meta['_enabled'] ?? 'no') === 'yes';
-        $this->type                     = $this->validateType($this->meta['_discount_type'] ?? '');
+        //$this->type                     = $this->validateType($this->meta['_discount_type'] ?? '');
         $this->value                    = (float)($this->meta['_discount_value'] ?? 0);
         $this->cap                      = isset($this->meta['_discount_cap']) ? (float)$this->meta['_discount_cap'] : null;
         $this->label                    = sanitize_text_field($this->meta['_label'] ?? '');

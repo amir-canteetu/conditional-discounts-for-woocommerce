@@ -20,9 +20,11 @@ class Db {
             $sql = "CREATE TABLE $table_name (
                 discount_id BIGINT UNSIGNED PRIMARY KEY,
                 label VARCHAR(255) NOT NULL,
+                version VARCHAR(255) NOT NULL,
                 enabled BOOLEAN DEFAULT false,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,   
+                discount_type VARCHAR(50) NOT NULL,
                 rules JSON NOT NULL,
                 FOREIGN KEY (discount_id) REFERENCES {$wpdb->posts}(ID) ON DELETE CASCADE
             ) $charset_collate;";

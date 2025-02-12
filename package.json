@@ -1,0 +1,28 @@
+{
+  "name": "conditional-discounts-for-woocommerce",
+  "version": "1.0.0",
+  "description": "The **Conditional Discounts for WooCommerce Plugin** plugin is designed to simplify creating and managing discounts for your WooCommerce store. You can configure general, cart-based, and product-specific discounts to maximize your store's potential.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "vite --host localhost",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@wordpress/components": "^29.3.0",
+    "@wordpress/element": "^6.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "lodash": "^4.17.21",
+    "vite": "^6.1.0"
+  }
+}

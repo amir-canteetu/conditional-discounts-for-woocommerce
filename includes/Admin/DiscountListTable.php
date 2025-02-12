@@ -3,7 +3,7 @@
 namespace Supreme\ConditionalDiscounts\Admin;
 
 use WC_Admin_List_Table;
-use Supreme\ConditionalDiscounts\Models\DiscountModel;
+use Supreme\ConditionalDiscounts\Models\Discount;
 use Supreme\ConditionalDiscounts\PostTypes\ShopDiscountType;
 
 
@@ -35,9 +35,8 @@ class DiscountListTable extends \WC_Admin_List_Table {
          */
         protected function render_blank_state() {
             echo '<div class="woocommerce-BlankState">';
-            echo '<h2 class="woocommerce-BlankState-message">' . esc_html__( 'Discounts are a great way to offer reward your customers and boost revenues. They will appear here once created.', 'conditional-discounts-for-woocommerce' ) . '</h2>';
+            echo '<h2 class="woocommerce-BlankState-message">' . esc_html__( 'Discounts are a great way to reward your customers and boost revenues. They will appear here once created.', 'conditional-discounts-for-woocommerce' ) . '</h2>';
             echo '<a class="woocommerce-BlankState-cta button-primary button" href="' . esc_url( admin_url( 'post-new.php?post_type=shop_discount' ) ) . '">' . esc_html__( 'Create your first discount', 'conditional-discounts-for-woocommerce' ) . '</a>';
-            echo '<a class="woocommerce-BlankState-cta button" target="_blank" href="https://woocommerce.com/document/coupon-management/?utm_source=blankslate&utm_medium=product&utm_content=couponsdoc&utm_campaign=woocommerceplugin">' . esc_html__( 'Learn more about discounts', 'conditional-discounts-for-woocommerce' ) . '</a>';
             echo '</div>';
         } 
         
@@ -66,9 +65,9 @@ class DiscountListTable extends \WC_Admin_List_Table {
 
 	}  
 
-        private function get_discount_object($post_id): DiscountModel {
+        private function get_discount_object($post_id): Discount {
             if (!isset($this->discount_object_cache[$post_id])) {
-                $this->discount_object_cache[$post_id] = new DiscountModel($post_id);
+                $this->discount_object_cache[$post_id] = new Discount($post_id);
             }
             return $this->discount_object_cache[$post_id];
         } 
@@ -102,7 +101,7 @@ class DiscountListTable extends \WC_Admin_List_Table {
                 }
         }        
         
-        protected function render_name_column(DiscountModel $discount) {
+        protected function render_name_column(Discount $discount) {
             
            $edit_link       = get_edit_post_link($discount->get_id());
            $title           = $discount->get_label();
