@@ -5,6 +5,18 @@ namespace Supreme\ConditionalDiscounts\DecisionEngine;
 use WC_Cart;
 use WP_User;
 
+
+/**
+ * RuleSet class.
+ *
+ * -- Encapsulates all the logic related to evaluating and managing rule conditions
+ * 
+ * -- The RuleSet class would need to load the rules from the database. Since the rules are stored as JSON, the class should parse and validate 
+ * this JSON. Validation is important to ensure that the rules are in the correct format and contain valid values. For example, checking that 
+ * numerical values are positive, dates are in the correct format, and arrays of product IDs are integers.
+ *
+ */
+
 class RuleSet {
     private array $rules;
     private array $context;

@@ -7,7 +7,7 @@ use Supreme\ConditionalDiscounts\Admin\Admin;
 use Supreme\ConditionalDiscounts\Discounts\DiscountHandler;
 use Supreme\ConditionalDiscounts\PostTypes\ShopDiscountType;
 use Supreme\ConditionalDiscounts\Admin\DiscountListTable;
-use Supreme\ConditionalDiscounts\Admin\DiscountFormHandler;
+use Supreme\ConditionalDiscounts\Admin\RuleBuilder;
 
 
 class Bootstrap {
@@ -40,7 +40,7 @@ class Bootstrap {
 
     public function initialize_services() {    
         (new DiscountListTable());
-        (new DiscountFormHandler());
+        (new RuleBuilder());
     }
 
     private function define_admin_filter_hooks() {
