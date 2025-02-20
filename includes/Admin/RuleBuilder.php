@@ -15,6 +15,7 @@ class RuleBuilder {
     public function __construct() {
         add_action('add_meta_boxes', [$this, 'add_meta_box']);
         add_action('wp_ajax_save_discount_rules', [$this, 'save_discount_rules'], 10, 3);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_select2_scripts']);
     }
 
     public function add_meta_box() {
@@ -25,8 +26,29 @@ class RuleBuilder {
             'shop_discount'
         );
     }
+    
+    public function enqueue_select2_scripts( ) {
+        wp_enqueue_script(
+            'select2-js',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js',
+            ['jquery'],
+            '4.0.13',
+            true
+        );
+
+        wp_enqueue_style(
+            'select2-css',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css',
+            [],
+            '4.0.13'
+        );        
+    }
 
     public function render_meta_box($post) {
+        
+        $roles      = $this->get_roles();
+        $categories = $this->get_product_categories_list();
+        $products   = $this->get_products_list();
         
         global $wpdb;
         $repository = new DiscountRepository($wpdb);            
@@ -37,9 +59,83 @@ class RuleBuilder {
         }
         
         $this->enqueue_assets($discount->get_rule_set());
-        echo '<div id="cdwc-rule-builder-root"></div>';
+        
+        $template_path = CDWC_PLUGIN_DIR . '/includes/Views/discount-rules-form.php';
+
+        if (file_exists($template_path)) {
+            include $template_path;
+        } else {
+            echo '<p>Template file not found.</p>';
+        }
         
     }
+    
+    
+    private function get_roles() {
+        
+        static $roles = null;
+        if (null === $roles) {
+            global $wp_roles;
+            if (!isset($wp_roles)) {
+                $wp_roles = new WP_Roles();
+            }
+            $roles = $wp_roles->get_names();
+        }
+        return $roles;
+        
+    } 
+    
+    
+    private function get_product_categories_list() {
+         
+        $terms = get_terms( array(
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => true,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ) );
+
+        $categories = [];
+
+        if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+            foreach ( $terms as $term ) {
+                // Use slug as key and name as value.
+                $categories[ $term->slug ] = $term->name;
+            }
+        }
+
+        return $categories;
+    }  
+    
+    
+    /**
+     * Retrieves all published WooCommerce products.
+     *
+     * @return array Associative array of products (ID => Title).
+     */
+    private function get_products_list() {
+        $args = array(
+            'post_type'      => 'product',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,       // Retrieve all products. Consider pagination if you have many products.
+            'orderby'        => 'title',
+            'order'          => 'ASC'
+        );
+
+        $query      = new \WP_Query( $args );
+        $products   = array();
+
+        if ( $query->have_posts() ) {
+            while ( $query->have_posts() ) {
+                $query->the_post();
+                $products[ get_the_ID() ] = get_the_title();
+            }
+        }
+
+        wp_reset_postdata();
+
+        return $products;
+    }    
     
 
     private function enqueue_assets($initial_rules) {
