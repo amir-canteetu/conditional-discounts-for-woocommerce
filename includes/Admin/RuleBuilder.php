@@ -14,7 +14,7 @@ class RuleBuilder {
     
     public function __construct() {
         add_action('add_meta_boxes', [$this, 'add_meta_box']);
-        add_action('wp_ajax_save_discount_rules', [$this, 'save_discount_rules'], 10, 3);
+        add_action('wp_ajax_save_discount_rules', [$this, 'save_discount_rules'], 10);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_select2_scripts']);
     }
 
@@ -45,10 +45,11 @@ class RuleBuilder {
     }
 
     public function render_meta_box($post) {
-        
-        $roles      = $this->get_roles();
-        $categories = $this->get_product_categories_list();
-        $products   = $this->get_products_list();
+
+        $roles      = array_merge( ["all"=>"All"], $this->get_roles() );
+        $categories = array_merge( ["all"=>"All"], $this->get_product_categories_list() );
+        $products   = array_merge( ["all"=>"All"], $this->get_products_list() );
+    
         
         global $wpdb;
         $repository = new DiscountRepository($wpdb);            
@@ -147,31 +148,50 @@ class RuleBuilder {
           filemtime(CDWC_PLUGIN_DIR . '/assets/admin/js/cdwc-admin.js'),
           true
         );
+        
+        wp_enqueue_script(
+          'Ajv',
+          'https://cdnjs.cloudflare.com/ajax/libs/ajv/6.12.6/ajv.min.js',
+          [],
+          '6.12.6'
+        );        
 
         wp_localize_script('cdwc-rule-builder', 'cdwcRules', [
           'initialData' => $initial_rules,
           'api' => [
             'saveUrl' => admin_url('admin-ajax.php'),
             'action' => 'save_discount_rules',
-            'nonce' => wp_create_nonce('cdwc_save_rules')
+            'nonce' => wp_create_nonce('save_discount_rules_action')
           ],
           'schema' => DiscountSchema::get()
         ]);
     }
-       
+    
+    public function save_discount_rules( ) { 
+        
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'save_discount_rules_action' ) ) {
+            wp_send_json_error('Nonce verification failed.');
+            return;
+        }
 
-    public function save_discount_rules($post_id, $post, $update) {
-        
+        if ( ! current_user_can( 'edit_shop_discount', $_POST['post_id'] ) ) {
+            wp_send_json_error('Insufficient permissions.');
+            return;
+        }
+
+        $discount_rules     = isset($_POST['discount_rules']) ? $_POST['discount_rules'] : '';
+        $sanitized_rules    = RuleSanitizer::process($discount_rules);
+
         global $wpdb;
-        
-        if (!current_user_can('edit_shop_discount', $post_id)) return;
-        
         $repository = new DiscountRepository($wpdb);
-        $sanitized  = RuleSanitizer::process($_POST['discount_rules']);
-        
-        $repository->update($post_id, [
-            'rules' => $sanitized,
-            'label' => sanitize_text_field($_POST['post_title'])
+        $repository->update($_POST['post_id'], [
+            'rules' => $sanitized_rules,
+            'label' => sanitize_text_field($_POST['post_title']),
         ]);
-    }
+
+        wp_send_json_success('Discount rules updated successfully.');
+    }    
+    
+    
+    
 }
