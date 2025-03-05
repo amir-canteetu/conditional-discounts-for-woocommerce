@@ -35,8 +35,8 @@ class DiscountListTable extends \WC_Admin_List_Table {
          */
         protected function render_blank_state() {
             echo '<div class="woocommerce-BlankState">';
-            echo '<h2 class="woocommerce-BlankState-message">' . esc_html__( 'Discounts are a great way to reward your customers and boost revenues. They will appear here once created.', 'conditional-discounts-for-woocommerce' ) . '</h2>';
-            echo '<a class="woocommerce-BlankState-cta button-primary button" href="' . esc_url( admin_url( 'post-new.php?post_type=shop_discount' ) ) . '">' . esc_html__( 'Create your first discount', 'conditional-discounts-for-woocommerce' ) . '</a>';
+            echo '<h2 class="woocommerce-BlankState-message">' . esc_html__( 'Discounts are a great way to reward your customers and boost revenues. They will appear here once created.', 'conditional-discounts' ) . '</h2>';
+            echo '<a class="woocommerce-BlankState-cta button-primary button" href="' . esc_url( admin_url( 'post-new.php?post_type=shop_discount' ) ) . '">' . esc_html__( 'Create your first discount', 'conditional-discounts' ) . '</a>';
             echo '</div>';
         } 
         
@@ -49,12 +49,12 @@ class DiscountListTable extends \WC_Admin_List_Table {
 	public function define_columns( $columns ) {
 		$show_columns                   = [];
 		$show_columns['cb']             = $columns['cb'];
-		$show_columns['name']           = __( 'Name', 'conditional-discounts-for-woocommerce' );
-//                $show_columns['type']           = __( 'Type', 'conditional-discounts-for-woocommerce' );
-//		$show_columns['amount']         = __( 'Amount', 'conditional-discounts-for-woocommerce' );
-//		$show_columns['products']       = __( 'Product IDs', 'conditional-discounts-for-woocommerce' );
-//		$show_columns['categories']     = __( 'Categories', 'conditional-discounts-for-woocommerce' );
-//                $show_columns['dates']          = __( 'Validity period', 'conditional-discounts-for-woocommerce' );
+		$show_columns['name']           = __( 'Name', 'conditional-discounts' );
+//                $show_columns['type']           = __( 'Type', 'conditional-discounts' );
+//		$show_columns['amount']         = __( 'Amount', 'conditional-discounts' );
+//		$show_columns['products']       = __( 'Product IDs', 'conditional-discounts' );
+//		$show_columns['categories']     = __( 'Categories', 'conditional-discounts' );
+//                $show_columns['dates']          = __( 'Validity period', 'conditional-discounts' );
 
 		return $show_columns;
 	} 
@@ -120,12 +120,12 @@ class DiscountListTable extends \WC_Admin_List_Table {
                    'edit' => sprintf(
                        '<a href="%s">%s</a>',
                        get_edit_post_link($discount->get_id()),
-                       __('Edit', 'conditional-discounts-for-woocommerce')
+                       __('Edit', 'conditional-discounts')
                    ),
                    'duplicate' => sprintf(
                        '<a href="%s">%s</a>',
                        wp_nonce_url(admin_url('admin.php?action=cdw_duplicate&post='.$discount->get_id()), 'cdw-duplicate'),
-                       __('Duplicate', 'conditional-discounts-for-woocommerce')
+                       __('Duplicate', 'conditional-discounts')
                    )
                 ];
 

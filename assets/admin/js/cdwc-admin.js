@@ -1,268 +1,159 @@
 jQuery(document).ready(function($) {
-    
-    $('#applicable_user_roles').select2({
-        allowClear: true,
-        width: 'resolve'  
-    }); 
-    
-    $('#categories_for_discount').select2({
-        allowClear: true,
-        width: 'resolve'  
+
+
+  ["applicable_user_roles", "categories_for_discount", "products_for_discount", "tags_for_discount"].forEach((id) => {
+    $(`#${id}`).select2({
+      allowClear: true,
+      width: "resolve",
     });
-    
-    $('#products_for_discount').select2({
-        allowClear: true,
-        width: 'resolve'  
-    });       
+  });  
+
+  function validateDiscountFields() {
+
+    const errors = [];
+    const $enableDiscount = $('#enable_discount');
   
-});
+    // Only validate if discount is enabled
+    if ($enableDiscount.is(':checked')) {
 
+      // Validate Discount Label
+      if ($('#discount_label').val().trim() === '') {
+        errors.push('Discount label is required');
+      }
+  
+      // Validate Discount Value
+      const discountValue = parseFloat($('#discount_value').val());
+      if (isNaN(discountValue) || discountValue <= 0) {
+        errors.push('Discount value must be a positive number');
+      } else if (
+        $('#discount_type').val() === 'percentage' && discountValue > 100
+      ) {
+        errors.push('Percentage discount cannot exceed 100%');
+      }
+  
+      // Validate Dates
+      const endDate = new Date($('#discount_end_date').val());
+      const startDate = new Date($('#discount_start_date').val());
+      
+      if (!startDate.getTime()) {errors.push('Start date is required');}
+      if (!endDate.getTime()) {errors.push('End date is required');}
+      if (startDate > endDate) {errors.push('End date must be after start date');}
+  
+      // Validate Minimum Cart Total
+      const minCartTotal = parseFloat($('#minimum_cart_total').val());
+      if (isNaN(minCartTotal) || minCartTotal < 0) {
+        errors.push('Minimum cart total must be ≥ 0');
+      }
+    }
+  
+    return errors;
+  }
+  
+  function showValidationErrors(errors) {
+    const $errorContainer = $('#discount-errors');
+    $errorContainer.empty().hide();
+    
+    if (errors.length > 0) {
+      $errorContainer.append(
+        `<p><strong>Discount validation errors:</strong></p>` +
+        errors.map(error => `<p>• ${error}</p>`).join('')
+      ).show();
+    }
+  }  
 
-jQuery(document).ready(function($) {
-    const discountSaved = false;
-    const formConfig = {
-        selectors: {
-            publish: '#publish',
-            form: '#discount-settings-form',
-            fields: {
-                enable: '#enable_discount',
-                label: '#discount_label',
-                cartTotal: '#minimum_cart_total',
-                cartQuantity: '#minimum_cart_quantity',
-                type: '#discount_type',
-                value: '#discount_value',
-                cap: '#discount_cap',
-                products: '#products_for_discount',
-                categories: '#categories_for_discount',
-                roles: '#applicable_user_roles',
-                startDate: '#discount_start_date',
-                endDate: '#discount_end_date',
-                rules: '#discount_rules'
-            }
+  function sanitizeDiscountData(data) {
+    return {
+        meta: {
+            ...data.meta,
+            label: data.meta.label.substring(0, 255), // Limit length
+            value: Math.round(data.meta.value * 100) / 100, // 2 decimal places
+            products: data.meta.products.map(Number).filter(id => !isNaN(id)),
+            categories: data.meta.categories.map(slug => slug.replace(/[^a-z0-9-_]/gi, ''))
+        },
+        post: {
+            ...data.post,
+            id: parseInt(data.post.id) || 0
         }
     };
+}  
 
-    const discountSchema = {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "DiscountRules",
-      "type": "object",
-      "properties": {
-        "enable_discount": { "type": "boolean" },
-        "discount_label": { "type": "string", "minLength": 2 },
-        "minimum_cart_total": { "type": "number", "minimum": 0 },
-        "minimum_cart_quantity": { "type": "integer", "minimum": 0 },
-        "discount_type": { 
-          "type": "string", 
-          "enum": ["percentage", "fixed"]
-        },
-        "discount_value": {
-          "type": "number",
-          "minimum": 0,
-          "allOf": [
-            {
-              "if": { "properties": { "discount_type": { "const": "percentage" } } },
-              "then": { "maximum": 100 }
-            }
-          ]
-        },
-        "discount_cap": { 
-          "type": ["number", "null"], 
-          "minimum": 0,
-          "default": null
-        },
-        "products_for_discount": { 
-          "type": "array", 
-          "items": { "type": "integer", "minimum": 1 },
-          "uniqueItems": true
-        },
-        "categories_for_discount": { 
-          "type": "array", 
-          "items": { 
-            "type": "string",
-            "pattern": "^[a-z0-9_]+$"
-          },
-          "minItems": 1
-        },
-        "applicable_user_roles": { 
-          "type": "array", 
-          "items": { "type": "string" }
-        },
-        "discount_start_date": { 
-          "type": "string", 
-          "format": "date",
-          "maximum": { "$data": "1/discount_end_date" }
-        },
-        "discount_end_date": { 
-          "type": "string", 
-          "format": "date",
-          "minimum": { "$data": "1/discount_start_date" }
-        }
+  // Flag to avoid infinite loop when re-triggering the publish click.
+  var discountSaved = false;
+
+  $('#publish').on('click', function(e) {
+
+    if (discountSaved) {return;}
+  
+    e.preventDefault();
+
+    // Clear previous errors
+    $('#discount-errors').hide().empty();
+  
+    // Run validation
+    const errors = validateDiscountFields();
+
+    if (errors.length > 0) {
+      showValidationErrors(errors);
+      $('#publish').removeAttr('disabled');
+      return;
+    }
+  
+    // Proceed with AJAX if validation passes
+    $('#publish').attr('disabled', true);
+
+    const discountData = {
+      meta: {
+          enabled: $('#enable_discount').is(':checked') ? 1 : 0,
+          label: $('#discount_label').val().trim(),
+          min_cart_total: parseFloat($('#minimum_cart_total').val()) || 0,
+          min_cart_quantity: parseInt($('#minimum_cart_quantity').val()) || 0,
+          type: $('#discount_type').val(),
+          value: parseFloat($('#discount_value').val()) || 0,
+          cap: parseFloat($('#discount_cap').val()) || 0,
+          products: $('#products_for_discount').val() || [],
+          categories: $('#categories_for_discount').val() || [],
+          roles: $('#applicable_user_roles').val() || [],
+          start_date: $('#discount_start_date').val(),
+          end_date: $('#discount_end_date').val()
       },
-      "required": ["discount_type", "discount_value"],
-      "if": {
-        "properties": { "discount_type": { "const": "percentage" } },
-        "required": ["discount_type"]
-      },
-      "then": {
-        "required": ["discount_cap"]
+      post: {
+          id: $('#post_ID').val(),
+          status: $('#post_status').val()
       }
     };
 
-    // Initialize AJV with better configuration
-    const ajv = new Ajv({
-        allErrors: true,
-        jsonPointers: true, // Required for dataPath formatting
-        verbose: true,
-        coerceTypes: true,
-        useDefaults: true,
-        $data: true,
-        messages: false
-    });
-    
-    // Add custom format validation for dates
-    ajv.addFormat('date', {
-        validate: (dateString) => !isNaN(Date.parse(dateString))
-    });
 
-    const validateDiscount = ajv.compile(discountSchema);
+    const discount = JSON.stringify(sanitizeDiscountData(discountData));
+    console.log(discount);
 
-    function showValidationErrors(errors) {
-        // Clear previous errors
-        $('.validation-error').removeClass('validation-error');
-        $('.error-message').remove();
-
-        errors.forEach(error => {
-            let fieldName = error.dataPath?.replace('/', '') || '';
-            let $field;
-
-            // Handle array field naming convention
-            if (fieldName.endsWith('_for_discount') || fieldName.endsWith('_user_roles')) {
-                fieldName += '[]'; // Match multi-select name attributes
-            }
-
-            // Special case for minItems error
-            if (error.keyword === 'minItems') {
-                switch(fieldName) {
-                    case 'categories_for_discount':
-                        fieldName = 'categories_for_discount[]';
-                        break;
-                    case 'products_for_discount':
-                        fieldName = 'products_for_discount[]';
-                        break;
-                    case 'applicable_user_roles':
-                        fieldName = 'applicable_user_roles[]';
-                        break;
-                }
-            }
-
-            $field = $(`[name="${fieldName}"]`);
-
-            // Fallback for select2 elements
-            if (!$field.length && fieldName.endsWith('[]')) {
-                $field = $(`#${fieldName.replace('[]', '')}`);
-            }
-
-            if (!$field.length) {
-                console.warn('No matching field for error:', error);
-                return;
-            }
-
-            const $parent = $field.closest('tr');
-            $parent.addClass('validation-error');
-
-            // Create error message with context-specific text
-            const errorMessage = error.keyword === 'minItems' 
-                ? 'Please select at least one option' 
-                : error.message;
-
-            $parent.append(`
-                <div class="error-message" style="color:red; margin-top:5px;">
-                    ${errorMessage}
-                </div>
-            `);
-
-            // Add visual indicator to select2 elements
-            if ($field.hasClass('select2-hidden-accessible')) {
-                $field.next('.select2-container').css('border', '1px solid #dc3232');
-            }
-        });
-
-        // Focus first invalid field
-        $('.validation-error input, .validation-error select').first().trigger('focus');
-    }
-
-    function normalizeFormData(rawData) {
-        return {
-            ...rawData,
-            minimum_cart_total: parseFloat(rawData.minimum_cart_total) || 0,
-            minimum_cart_quantity: parseInt(rawData.minimum_cart_quantity, 10) || 0,
-            discount_value: parseFloat(rawData.discount_value),
-            discount_cap: rawData.discount_cap ? parseFloat(rawData.discount_cap) : null,
-            products_for_discount: rawData.products_for_discount.map(Number),
-            discount_start_date: rawData.discount_start_date || null,
-            discount_end_date: rawData.discount_end_date || null
-        };
-    }
-
-    function handleValidationError(message) {
-        const $publish = $(formConfig.selectors.publish);
-        $publish.prop('disabled', false);
-        alert(message);
-    }
-
-    $(formConfig.selectors.publish).on('click', async function(e) {
-        if (discountSaved) return;
-        e.preventDefault();
-
-        const rawData = {
-            enable_discount: $(formConfig.selectors.fields.enable).is(':checked'),
-            discount_label: $(formConfig.selectors.fields.label).val(),
-            minimum_cart_total: $(formConfig.selectors.fields.cartTotal).val(),
-            minimum_cart_quantity: $(formConfig.selectors.fields.cartQuantity).val(),
-            discount_type: $(formConfig.selectors.fields.type).val(),
-            discount_value: $(formConfig.selectors.fields.value).val(),
-            discount_cap: $(formConfig.selectors.fields.cap).val(),
-            products_for_discount: $(formConfig.selectors.fields.products).val() || [],
-            categories_for_discount: $(formConfig.selectors.fields.categories).val() || [],
-            applicable_user_roles: $(formConfig.selectors.fields.roles).val() || [],
-            discount_start_date: $(formConfig.selectors.fields.startDate).val(),
-            discount_end_date: $(formConfig.selectors.fields.endDate).val()
-        };
-
-        const formData = normalizeFormData(rawData);
-        const isValid = validateDiscount(formData);
-
-        if (!isValid) {
-            showValidationErrors(validateDiscount.errors);
-            return;
-        }
-
-        try {
-            $(this).prop('disabled', true);
-            const response = await $.ajax({
-                type: 'POST',
-                url: ajaxurl,
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify({
-                    post_id: $('#post_ID').val(),
-                    discount_data: formData,
-                    action: 'save_discount_rules',
-                    nonce: cdwcRules.api.nonce
-                })
-            });
-
+    // Trigger the AJAX call to save discount rules.
+    $.ajax({
+        type: 'POST',
+        url: ajaxurl, // Provided by WordPress.
+        data: {
+            action: 'save_discount_rules',
+            data: discount,
+            nonce: cdwcRules.api.nonce  
+        },
+        success: function(response) {
             if (response.success) {
+                // Mark that discount rules are saved.
                 discountSaved = true;
-                $(this).trigger('click');
+                // Optionally show a success message.
+                // Re-enable the publish button (if it was disabled).
+                $('#publish').removeAttr('disabled');
+                // Trigger the click again so the normal post save occurs.
+                $('#publish').trigger('click');
             } else {
-                handleValidationError(response.data.message || 'Server validation failed');
+                // Handle error; show message to the user.
+                console.log('Error saving discount rules: ' + response.data);
+                // Re-enable the publish button.
+                $('#publish').removeAttr('disabled');
             }
-        } catch (error) {
-            const errorMessage = error.responseJSON?.data?.message || 
-                               error.statusText || 
-                               'An unknown error occurred';
-            handleValidationError(errorMessage);
+        },
+        error: function(xhr, status, error) {
+            $('#publish').removeAttr('disabled');
         }
     });
+  });
 });

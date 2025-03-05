@@ -5,6 +5,7 @@ namespace Supreme\ConditionalDiscounts\Models;
 use DateTimeImmutable;
 use WC_Product;
 use InvalidArgumentException;
+use Supreme\ConditionalDiscounts\Admin\RuleBuilder;
 use Supreme\ConditionalDiscounts\DecisionEngine\RuleSet;
 
 /*Serves as the central data object and business rule validator for discounts.
@@ -57,7 +58,7 @@ Immutable date objects
 Range checking for numeric values
 
 Default value handling
- *  */
+ **/
 
 class Discount
 {
@@ -65,31 +66,30 @@ class Discount
     private array $meta         = [];
     private bool $meta_loaded   = false;
 
-    private ?float $cap;
-    private string $type;
-    private float $value;
     private bool $enabled;
     private string $label;  
-    private ?int $item_limit;
+    private string $type;
+    private float $value;
+    private ?float $cap;
+    private ?float $min_cart_total;
+    private ?int $min_cart_quantity;
+    private array $products         = [];
+    private array $categories       = []; 
+    private array $tags             = [];
+    private array $user_roles       = [];
+    private string $start_date;
+    private string $end_date;
+    private string $notes;  
+    
     private RuleSet $rule_set;    
-    private bool $exclude_sale_items;
-    private ?DateTimeImmutable $end_date;
-    private array $excluded_products = [];
-    private ?DateTimeImmutable $start_date;
-
-    private array $applicable_tags          = [];
-    private array $applicable_roles         = [];
-    private array $applicable_products      = [];
-    private array $applicable_categories    = [];
 
     public const MAX_ITEM_LIMIT = 1000000;
     public const VALID_TYPES    = ['percentage', 'fixed', 'bogo'];
 
-    public function __construct(int $post_id)
-    {
+    public function __construct(int $post_id) {
         if (!get_post($post_id) || get_post_type($post_id) !== 'shop_discount') {
             throw new InvalidArgumentException(
-                __('Invalid discount post ID', 'conditional-discounts-for-woocommerce')
+                __('Invalid discount post ID', 'conditional-discounts')
             );
         }
 
@@ -102,39 +102,35 @@ class Discount
         global $wpdb;
         $table_name                     = $wpdb->prefix . 'cdwc_discount_rules';
         $rules                          = $wpdb->get_row( $wpdb->prepare("SELECT rules FROM $table_name WHERE discount_id = %d", $this->id), ARRAY_A );
-        $this->meta                     = $rules ? json_decode($rules['rules'], true) : [];
-        
-        $this->enabled                  = ($this->meta['_enabled'] ?? 'no') === 'yes';
-        //$this->type                     = $this->validateType($this->meta['_discount_type'] ?? '');
-        $this->value                    = (float)($this->meta['_discount_value'] ?? 0);
-        $this->cap                      = isset($this->meta['_discount_cap']) ? (float)$this->meta['_discount_cap'] : null;
-        $this->label                    = sanitize_text_field($this->meta['_label'] ?? '');
-        $this->start_date               = $this->parseDate($this->meta['_start_date'] ?? '');
-        $this->end_date                 = $this->parseDate($this->meta['_end_date'] ?? '');
-        $this->exclude_sale_items       = (bool)($this->meta['_exclude_sale_items'] ?? false);
-        $this->excluded_products        = array_map('intval', (array)($this->meta['_excluded_products'] ?? []));
-        $this->item_limit               = isset($this->meta['_item_limit']) ? min((int)$this->meta['_item_limit'], self::MAX_ITEM_LIMIT) : null;
-
-        $this->applicable_products      = array_map('intval', (array)($this->meta['_applicable_products'] ?? []));
-        $this->applicable_categories    = array_map('intval', (array)($this->meta['_applicable_categories'] ?? []));
-        $this->applicable_tags          = array_map('intval', (array)($this->meta['_applicable_tags'] ?? []));
-        $this->applicable_roles         = (array)($this->meta['_applicable_roles'] ?? []);
-
-        $this->rule_set                 = new RuleSet($this->meta['_rule_set'] ?? []);
-
-        $this->meta_loaded = true;
+        $this->meta                     = $rules ? json_decode($rules['rules'], true) : RuleBuilder::get_default_rules();           
+        $this->enabled                  = ($this->meta['enabled'] ?? 'no') === 'yes';
+        $this->label                    = sanitize_text_field($this->meta['label'] ?? '');
+        $this->type                     = $this->meta['type'] ?? 'percentage' ;
+        $this->value                    = (float)($this->meta['value'] ?? 0);
+        $this->cap                      = isset($this->meta['cap']) ? (float)$this->meta['cap'] : null;   
+        $this->min_cart_total           = (float)($this->meta['min_cart_total'] ?? 0.00);
+        $this->min_cart_quantity        = (int)($this->meta['min_cart_quantity'] ?? 0);
+        $this->products                 = array_map('intval', (array)($this->meta['products'] ?? []));
+        $this->categories               = array_map('intval', (array)($this->meta['categories'] ?? []));
+        $this->tags                     = array_map('intval', (array)($this->meta['tags'] ?? []));
+        $this->user_roles               = (array)($this->meta['user_roles'] ?? []);
+        $this->start_date               = $this->meta['validity']['start_date'];
+        $this->end_date                 = $this->meta['validity']['end_date'];    
+        $this->notes                    = sanitize_text_field($this->meta['notes'] ?? '');
+        $this->rule_set                 = new RuleSet($this->meta['rule_set'] ?? []);
+        $this->meta_loaded              = true;
     }
-
+    
     private function validateType(string $type): string
     {
         if (!in_array($type, self::VALID_TYPES, true)) {
             throw new InvalidArgumentException(
-                sprintf(__('Invalid discount type: %s', 'conditional-discounts-for-woocommerce'), $type)
+                sprintf(__('Invalid discount type: %s', 'conditional-discounts'), $type)
             );
         }
         return $type;
-    }
-
+    } 
+    
     private function parseDate(?string $date): ?DateTimeImmutable
     {
         try {
@@ -143,7 +139,20 @@ class Discount
             error_log("Invalid date format for discount {$this->id}: {$date}");
             return null;
         }
-    }
+    }     
+    
+    
+    public function get_min_cart_total(): float
+    {
+        $this->loadMeta();
+        return $this->min_cart_total;
+    } 
+    
+    public function get_min_cart_quantity(): int
+    {
+        $this->loadMeta();
+        return $this->min_cart_quantity;
+    }       
 
     public function get_id(): int
     {
@@ -180,28 +189,16 @@ class Discount
         return $this->label;
     }
 
-    public function get_start_date(): ?DateTimeImmutable
+    public function get_start_date(): string
     {
         $this->loadMeta();
         return $this->start_date;
     }
 
-    public function get_end_date(): ?DateTimeImmutable
+    public function get_end_date(): string
     {
         $this->loadMeta();
         return $this->end_date;
-    }
-
-    public function should_exclude_sale_items(): bool
-    {
-        $this->loadMeta();
-        return $this->exclude_sale_items;
-    }
-
-    public function get_excluded_products(): array
-    {
-        $this->loadMeta();
-        return $this->excluded_products;
     }
 
     public function get_item_limit(): ?int
@@ -216,19 +213,26 @@ class Discount
         return $this->rule_set;
     }
 
-    public function get_applicable_products(): array
+    public function get_products(): array
     {
         $this->loadMeta();
         return array_filter(array_map(
             fn($id) => wc_get_product($id),
-            $this->applicable_products
+            $this->products
         ));
     }
-
-    public function get_applicable_category_ids(): array
+    
+    
+    public function get_tags(): array
     {
         $this->loadMeta();
-        return $this->applicable_categories;
+        return $this->tags;
+    }    
+
+    public function get_categories(): array
+    {
+        $this->loadMeta();
+        return $this->categories;
     }
 
     public function get_applicable_tag_ids(): array
@@ -237,10 +241,10 @@ class Discount
         return $this->applicable_tags;
     }
 
-    public function get_applicable_roles(): array
+    public function get_user_roles(): array
     {
         $this->loadMeta();
-        return $this->applicable_roles;
+        return $this->user_roles;
     }
 
     public function is_active(): bool
@@ -310,7 +314,7 @@ class Discount
             $table_name,
             [
                 'discount_id' => $this->id,
-                'rule_value' => $rules
+                'rules'       => $rules
             ],
             ['%d', '%s']
         );

@@ -27,7 +27,7 @@ Use this plugin to incentivize customer purchases, clear inventory, or reward sp
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/conditional-discounts-for-woocommerce` directory, or install the plugin through the WordPress Plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/conditional-discounts` directory, or install the plugin through the WordPress Plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Navigate to **WooCommerce > Settings > Conditional Discounts** to configure your discounts.
 
