@@ -1,0 +1,21 @@
+    .select2-container--default .select2-selection--multiple.validation-error {
+    border-color: #dc3232 !important;
+}
+
+/* Error message styling */
+.error-message {
+    display: block;
+    color: #dc3232;
+    font-size: 13px;
+    margin: 5px 0 0;
+    line-height: 1.5;
+}
+
+input[type="time"] {
+    padding: 3px 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 32px;
+    vertical-align: middle;
+}
+

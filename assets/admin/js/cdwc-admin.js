@@ -158,4 +158,32 @@ jQuery(document).ready(function($) {
         }
     });
   });
+  
+    function toggleDiscountFields() {
+        // Hide all fields first
+        $('#products_for_discount, #categories_for_discount, #tags_for_discount').closest('tr').hide();
+        
+        // Get selected discount type
+        var discountType = $('#discount_type').val();
+        
+        // Show relevant field based on type
+        switch(discountType) {
+            case 'product':
+                $('#products_for_discount').closest('tr').show();
+                break;
+            case 'category':
+                $('#categories_for_discount').closest('tr').show();
+                break;
+            case 'tag':
+                $('#tags_for_discount').closest('tr').show();
+                break;
+        }
+    }
+
+    // Initial state on page load
+    toggleDiscountFields();
+
+    // Update on change
+    $('#discount_type').on('change', toggleDiscountFields);  
+  
 });

@@ -232,11 +232,18 @@ class RuleBuilder {
         );
 
         wp_enqueue_style(
+            'cdwc-admin-css',
+            CDWC_PLUGIN_URL . '/assets/admin/css/cdwc-admin.css',
+            [],
+            '1.0.0'
+        );     
+        
+        wp_enqueue_style(
             'select2-css',
             'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css',
             [],
             '4.0.13'
-        );          
+        );         
           
         wp_enqueue_script('jquery-validation', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js', ['jquery']);        
 

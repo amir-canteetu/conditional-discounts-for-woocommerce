@@ -6,22 +6,6 @@ if (!defined('ABSPATH')) {
 
 ?>
 
-<style>
-    .select2-container--default .select2-selection--multiple.validation-error {
-    border-color: #dc3232 !important;
-}
-
-/* Error message styling */
-.error-message {
-    display: block;
-    color: #dc3232;
-    font-size: 13px;
-    margin: 5px 0 0;
-    line-height: 1.5;
-}
-</style>
-
-
 <table class="form-table" id="discount-settings-form-table">
     <?php if (!empty($cdwc_template['errors'])) : ?>
     <tr valign="top">
@@ -66,7 +50,49 @@ if (!defined('ABSPATH')) {
             <input type="text" id="discount_label" name="discount_label" class="regular-text" 
                 value="<?php echo esc_attr($cdwc_template['discount']->get_label()); ?>" />
         </td>
-    </tr>        
+    </tr>    
+
+    <tr valign="top">
+        <th scope="row"><label for="products_for_discount"><?php esc_html_e('Products for Discount', 'conditional-discounts'); ?></label></th>
+        <td>
+            <select id="products_for_discount" name="products_for_discount[]" multiple="multiple" style="min-width: 200px;">
+                <?php foreach ($cdwc_template['products'] as $id => $title) : ?>
+                    <option value="<?php echo esc_attr($id); ?>"
+                        <?php selected(in_array($id, $cdwc_template['discount']->get_products())); ?>>
+                        <?php echo esc_html($title); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+    </tr>
+    
+    <tr valign="top">
+        <th scope="row"><label for="categories_for_discount"><?php esc_html_e('Categories for Discount', 'conditional-discounts'); ?></label></th>
+        <td>
+            <select id="categories_for_discount" name="categories_for_discount[]" multiple="multiple" style="<?php echo esc_attr('min-width: 200px;'); ?>">
+                <?php foreach ($cdwc_template['categories'] as $slug => $name) : ?>
+                    <option value="<?php echo esc_attr($slug); ?>"
+                        <?php selected(in_array($slug, $cdwc_template['discount']->get_categories())); ?>>
+                        <?php echo esc_html($name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+    </tr>
+    
+    <tr valign="top">
+        <th scope="row"><label for="tags_for_discount"><?php esc_html_e('Tags for Discount', 'conditional-discounts'); ?></label></th>
+        <td>
+            <select id="tags_for_discount" name="tags_for_discount[]" multiple="multiple" style="<?php echo esc_attr('min-width: 200px;'); ?>">
+                <?php foreach ($cdwc_template['tags'] as $slug => $name) : ?>
+                    <option value="<?php echo esc_attr($slug); ?>"
+                        <?php selected(in_array($slug, $cdwc_template['discount']->get_tags())); ?>>
+                        <?php echo esc_html($name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+    </tr>     
     
     <tr valign="top">
         <th scope="row"><label for="minimum_cart_total"><?php esc_html_e('Minimum Cart Total', 'conditional-discounts'); ?></label></th>
@@ -114,49 +140,7 @@ if (!defined('ABSPATH')) {
                    step="0.01" 
                    value="<?php echo $discount->get_cap() !== null ? esc_attr($discount->get_cap()) : ''; ?>" />
         </td>
-    </tr>  
-    
-    <tr valign="top">
-        <th scope="row"><label for="products_for_discount"><?php esc_html_e('Products for Discount', 'conditional-discounts'); ?></label></th>
-        <td>
-            <select id="products_for_discount" name="products_for_discount[]" multiple="multiple" style="min-width: 200px;">
-                <?php foreach ($cdwc_template['products'] as $id => $title) : ?>
-                    <option value="<?php echo esc_attr($id); ?>"
-                        <?php selected(in_array($id, $cdwc_template['discount']->get_products())); ?>>
-                        <?php echo esc_html($title); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </td>
-    </tr>
-    
-    <tr valign="top">
-        <th scope="row"><label for="categories_for_discount"><?php esc_html_e('Categories for Discount', 'conditional-discounts'); ?></label></th>
-        <td>
-            <select id="categories_for_discount" name="categories_for_discount[]" multiple="multiple" style="<?php echo esc_attr('min-width: 200px;'); ?>">
-                <?php foreach ($cdwc_template['categories'] as $slug => $name) : ?>
-                    <option value="<?php echo esc_attr($slug); ?>"
-                        <?php selected(in_array($slug, $cdwc_template['discount']->get_categories())); ?>>
-                        <?php echo esc_html($name); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </td>
-    </tr>
-    
-    <tr valign="top">
-        <th scope="row"><label for="tags_for_discount"><?php esc_html_e('Tags for Discount', 'conditional-discounts'); ?></label></th>
-        <td>
-            <select id="tags_for_discount" name="tags_for_discount[]" multiple="multiple" style="<?php echo esc_attr('min-width: 200px;'); ?>">
-                <?php foreach ($cdwc_template['tags'] as $slug => $name) : ?>
-                    <option value="<?php echo esc_attr($slug); ?>"
-                        <?php selected(in_array($slug, $cdwc_template['discount']->get_tags())); ?>>
-                        <?php echo esc_html($name); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </td>
-    </tr>    
+    </tr>        
     
     <tr valign="top">
         <th scope="row"><label for="applicable_user_roles"><?php esc_html_e('Applicable User Roles', 'conditional-discounts'); ?></label></th>
@@ -188,6 +172,34 @@ if (!defined('ABSPATH')) {
                 value="<?php echo esc_attr((new DateTime($cdwc_template['discount']->get_end_date()))->format('Y-m-d')); ?>" />
         </td>
     </tr>
+    
+<tr valign="top">
+    <th scope="row"><label for="discount_start_time"><?php esc_html_e('Validity Start Time', 'conditional-discounts'); ?></label></th>
+    <td>
+        <input type="time" 
+               id="discount_start_time" 
+               name="discount_start_time" 
+               value="<?php echo esc_attr(
+                   (new DateTime($cdwc_template['discount']->get_start_date()))->format('H:i')
+               ); ?>" 
+               step="3600" />
+        <p class="description"><?php esc_html_e('Time in 24-hour format', 'conditional-discounts'); ?></p>
+    </td>
+</tr>
+
+<tr valign="top">
+    <th scope="row"><label for="discount_end_time"><?php esc_html_e('Validity End Time', 'conditional-discounts'); ?></label></th>
+    <td>
+        <input type="time" 
+               id="discount_end_time" 
+               name="discount_end_time" 
+               value="<?php echo esc_attr(
+                   (new DateTime($cdwc_template['discount']->get_end_date()))->format('H:i')
+               ); ?>" 
+               step="3600" />
+        <p class="description"><?php esc_html_e('Time in 24-hour format', 'conditional-discounts'); ?></p>
+    </td>
+</tr>    
     
     <input type="hidden" id="discount_rules" name="discount_rules"  value="<?php // echo esc_attr(wp_json_encode($cdwc_template['discount']->get_rules())); ?>" />
 </table>
