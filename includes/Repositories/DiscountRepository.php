@@ -133,10 +133,12 @@ class DiscountRepository {
             $format[] = '%d';
         }
 
-        if(isset($data['rules'])) {
-            $update_data['rules'] = json_encode($this->validateRules($data['rules']));
-            $format[] = '%s';
-        }
+//        if(isset($data['rules'])) {
+//            $update_data['rules'] = json_encode($this->validateRules($data['rules']));
+//            $format[] = '%s';
+//        }
+//        
+//        \write_log($update_data);
 
         if(!empty($update_data)) {
             $this->wpdb->update(
@@ -157,7 +159,7 @@ class DiscountRepository {
         }
 
         return true;
-    }    
+    }       
 
 
     /**

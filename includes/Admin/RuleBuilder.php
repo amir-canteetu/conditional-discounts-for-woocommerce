@@ -36,39 +36,6 @@ class RuleBuilder {
             'shop_discount'
         );
     }
-    
-    public static function get_default_rules(): array {
-        
-        $now = new \DateTime('now', new \DateTimeZone('UTC'));
-
-        // Set validity to current date at 00:00 UTC and end 7 days later at 23:59:59 UTC
-        $validity_start = new \DateTime('today', new \DateTimeZone('UTC'));
-        $validity_end = clone $validity_start;
-        $validity_end->modify('+7 days')->setTime(23, 59, 59);
-     
-
-        return [
-            'schema_version'      => '1.0',
-            'enabled'             => false,
-            'label'               => __('New Discount', 'conditional-discounts'),
-            'type'                => 'percentage',
-            'value'               => null,
-            'cap'                 => null,
-            'min_cart_total'      => 0.00,
-            'minimum_quantity'    => 0,
-            'products'            => [],
-            'categories'          => [],
-            'tags'                => [],  
-            'user_roles'          => [],
-            'notes'               => '',
-            'validity'            => [
-                'start_date'     => $validity_start->format(\DateTime::ATOM),
-                'end_date'       => $validity_end->format(\DateTime::ATOM),
-                'timezone'  => 'UTC'
-            ]
-        ];
-        
-    }   
 
     public function render_meta_box($post) {
 
@@ -100,6 +67,39 @@ class RuleBuilder {
         );
         
     }
+    
+    
+    public static function get_default_rules(): array {
+
+        // Set validity to current date at 00:00 UTC and end 7 days later at 23:59:59 UTC
+        $validity_start = new \DateTime('today', new \DateTimeZone('UTC'));
+        $validity_end = clone $validity_start;
+        $validity_end->modify('+7 days')->setTime(23, 59, 59);
+     
+
+        return [
+            'schema_version'      => '1.0',
+            'enabled'             => false,
+            'label'               => __('New Discount', 'conditional-discounts'),
+            'discount_value_type' => 'percentage',
+            'type'                => 'product',
+            'value'               => null,
+            'cap'                 => null,
+            'min_cart_total'      => 0.00,
+            'minimum_quantity'    => 0,
+            'products'            => [],
+            'categories'          => [],
+            'tags'                => [],  
+            'user_roles'          => [],
+            'notes'               => '',
+            'validity'            => [
+                'start_date'     => $validity_start->format(\DateTime::ATOM),
+                'end_date'       => $validity_end->format(\DateTime::ATOM),
+                'timezone'  => 'UTC'
+            ]
+        ];
+        
+    }       
 
     /**
      * Safe template rendering with output escaping
@@ -266,22 +266,24 @@ class RuleBuilder {
             if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'save_discount_rules_action' ) ) {
                 throw new \Exception(__('Nonce verification failed.', 'conditional-discounts'), 403);
             }
-
-            if ( ! current_user_can( 'edit_shop_discount', $_POST['post_id'] ) ) {
-                throw new \Exception(__('Insufficient permissions', 'conditional-discounts'), 400);
-            } 
             
             if (!isset($_POST['data'])) {
                 throw new \Exception(__('Invalid request format', 'conditional-discounts'), 400);
-            }   
+            }               
             
-            
-            $raw_data = json_decode(wp_unslash($_POST['data']), true);
+            //Decodes the JSON into a PHP associative array    
+            $raw_data   = json_decode(wp_unslash($_POST['data']), true);           
 
             if (!is_array($raw_data)) {
                 throw new \Exception(__('Malformed request data', 'conditional-discounts'), 400);
             }
-
+            
+            $post_id    = isset($raw_data['post']['id']) ? (int) $raw_data['post']['id'] : 0;   
+                    
+            if ( ! current_user_can( 'edit_shop_discount', $post_id ) ) {
+                throw new \Exception(__('Insufficient permissions', 'conditional-discounts'), 400);
+            } 
+            
             $data = wp_parse_args($raw_data, [
                 'meta' => [],
                 'post' => ['id' => 0, 'status' => '']
@@ -298,9 +300,9 @@ class RuleBuilder {
                 throw new \Exception(__('Unauthorized access', 'conditional-discounts'), 403);
             } 
             
-            // Sanitize meta data
-            $sanitized_rules = RuleSanitizer::process($data['meta']);
-            $validation_errors = RuleValidator::process($sanitized_rules);        
+            // Sanitize data
+            $sanitized_rules    = RuleSanitizer::process($data['meta']);
+            $validation_errors  = RuleValidator::process($sanitized_rules);        
             
             if (!empty($validation_errors)) {
                 wp_send_json_error([

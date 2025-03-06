@@ -69,6 +69,7 @@ class Discount
     private bool $enabled;
     private string $label;  
     private string $type;
+    private string $discount_value_type;
     private float $value;
     private ?float $cap;
     private ?float $min_cart_total;
@@ -84,7 +85,7 @@ class Discount
     private RuleSet $rule_set;    
 
     public const MAX_ITEM_LIMIT = 1000000;
-    public const VALID_TYPES    = ['percentage', 'fixed', 'bogo'];
+    public const VALID_TYPES    = ['product', 'category', 'tag', ];
 
     public function __construct(int $post_id) {
         if (!get_post($post_id) || get_post_type($post_id) !== 'shop_discount') {
@@ -105,7 +106,8 @@ class Discount
         $this->meta                     = $rules ? json_decode($rules['rules'], true) : RuleBuilder::get_default_rules();           
         $this->enabled                  = ($this->meta['enabled'] ?? 'no') === 'yes';
         $this->label                    = sanitize_text_field($this->meta['label'] ?? '');
-        $this->type                     = $this->meta['type'] ?? 'percentage' ;
+        $this->type                     = $this->meta['type'] ?? 'product';
+        $this->discount_value_type      = $this->meta['discount_value_type'] ?? 'percentage';
         $this->value                    = (float)($this->meta['value'] ?? 0);
         $this->cap                      = isset($this->meta['cap']) ? (float)$this->meta['cap'] : null;   
         $this->min_cart_total           = (float)($this->meta['min_cart_total'] ?? 0.00);
@@ -170,6 +172,12 @@ class Discount
         $this->loadMeta();
         return $this->type;
     }
+    
+    public function get_discount_value_type(): string
+    {
+        $this->loadMeta();
+        return $this->discount_value_type;
+    }    
 
     public function get_value(): float
     {

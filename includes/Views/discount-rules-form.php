@@ -34,6 +34,23 @@ if (!defined('ABSPATH')) {
         </td>
     </tr>
     <?php endif; ?>
+    
+    <tr valign="top">
+        <th scope="row"><label for="discount_type"><?php esc_html_e('Discount Type', 'conditional-discounts'); ?></label></th>
+        <td>
+            <select id="discount_type" name="discount_type">
+                <option value="product" <?php selected($discount->get_type(), 'product'); ?>>
+                    <?php esc_html_e('Product', 'conditional-discounts'); ?>
+                </option>
+                <option value="category" <?php selected($discount->get_type(), 'category'); ?>>
+                    <?php esc_html_e('Category', 'conditional-discounts'); ?>
+                </option>
+                <option value="tag" <?php selected($discount->get_type(), 'tag'); ?>>
+                    <?php esc_html_e('Tag', 'conditional-discounts'); ?>
+                </option>                
+            </select>
+        </td>
+    </tr>    
 
     <tr valign="top">
         <th scope="row"><label for="enable_discount"><?php esc_html_e('Enable Discount', 'conditional-discounts'); ?></label></th>
@@ -67,13 +84,13 @@ if (!defined('ABSPATH')) {
    </tr>   
    
     <tr valign="top">
-        <th scope="row"><label for="discount_type"><?php esc_html_e('Discount Type', 'conditional-discounts'); ?></label></th>
+        <th scope="row"><label for="discount_value_type"><?php esc_html_e('Discount-Value Type', 'conditional-discounts'); ?></label></th>
         <td>
-            <select id="discount_type" name="discount_type">
-                <option value="percentage" <?php selected($discount->get_type(), 'percentage'); ?>>
+            <select id="discount_value_type" name="discount_value_type">
+                <option value="percentage" <?php selected($discount->get_discount_value_type(), 'percentage'); ?>>
                     <?php esc_html_e('Percentage', 'conditional-discounts'); ?>
                 </option>
-                <option value="fixed" <?php selected($discount->get_type(), 'fixed'); ?>>
+                <option value="fixed" <?php selected($discount->get_discount_value_type(), 'fixed'); ?>>
                     <?php esc_html_e('Fixed', 'conditional-discounts'); ?>
                 </option>
             </select>
@@ -83,12 +100,7 @@ if (!defined('ABSPATH')) {
     <tr valign="top">
         <th scope="row"><label for="discount_value"><?php esc_html_e('Discount Value', 'conditional-discounts'); ?></label></th>
         <td>
-            <input type="number" 
-                   id="discount_value" 
-                   name="discount_value" 
-                   class="small-text" 
-                   step="0.01" 
-                   value="<?php echo esc_attr($discount->get_value()); ?>" />
+            <input type="number" id="discount_value" name="discount_value" class="small-text" step="0.01" value="<?php echo esc_attr($discount->get_value()); ?>" />
         </td>
     </tr>
 
@@ -165,7 +177,7 @@ if (!defined('ABSPATH')) {
         <th scope="row"><label for="discount_start_date"><?php esc_html_e('Validity Start Date', 'conditional-discounts'); ?></label></th>
         <td>
             <input type="date" id="discount_start_date" name="discount_start_date" 
-                value="<?php echo esc_attr($cdwc_template['discount']->get_start_date()); ?>" />
+                value="<?php echo esc_attr((new DateTime($cdwc_template['discount']->get_start_date()))->format('Y-m-d')); ?>" />
         </td>
     </tr>
     
@@ -173,7 +185,7 @@ if (!defined('ABSPATH')) {
         <th scope="row"><label for="discount_end_date"><?php esc_html_e('Validity End Date', 'conditional-discounts'); ?></label></th>
         <td>
             <input type="date" id="discount_end_date" name="discount_end_date" 
-                value="<?php echo esc_attr($cdwc_template['discount']->get_end_date()); ?>" />
+                value="<?php echo esc_attr((new DateTime($cdwc_template['discount']->get_end_date()))->format('Y-m-d')); ?>" />
         </td>
     </tr>
     

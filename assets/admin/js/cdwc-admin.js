@@ -68,6 +68,7 @@ jQuery(document).ready(function($) {
             label: data.meta.label.substring(0, 255), // Limit length
             value: Math.round(data.meta.value * 100) / 100, // 2 decimal places
             products: data.meta.products.map(Number).filter(id => !isNaN(id)),
+            tags: data.meta.tags.map(slug => slug.replace(/[^a-z0-9-_]/gi, '')),
             categories: data.meta.categories.map(slug => slug.replace(/[^a-z0-9-_]/gi, ''))
         },
         post: {
@@ -83,7 +84,7 @@ jQuery(document).ready(function($) {
   $('#publish').on('click', function(e) {
 
     if (discountSaved) {return;}
-  
+    
     e.preventDefault();
 
     // Clear previous errors
@@ -112,6 +113,7 @@ jQuery(document).ready(function($) {
           cap: parseFloat($('#discount_cap').val()) || 0,
           products: $('#products_for_discount').val() || [],
           categories: $('#categories_for_discount').val() || [],
+          tags: $('#tags_for_discount').val() || [],
           roles: $('#applicable_user_roles').val() || [],
           start_date: $('#discount_start_date').val(),
           end_date: $('#discount_end_date').val()

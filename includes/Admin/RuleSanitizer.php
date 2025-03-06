@@ -14,17 +14,17 @@ class RuleSanitizer {
         $clean = [];
     
         // Basic fields
-        $clean['enabled'] = rest_sanitize_boolean($discount_rules['enabled'] ?? false);
-        $clean['label'] = sanitize_text_field(substr($discount_rules['label'] ?? '', 0, 255));
-        $clean['min_cart_total'] = max(0, floatval($discount_rules['min_cart_total'] ?? 0));
+        $clean['enabled']           = rest_sanitize_boolean($discount_rules['enabled'] ?? false);
+        $clean['label']             = sanitize_text_field(substr($discount_rules['label'] ?? '', 0, 255));
+        $clean['min_cart_total']    = max(0, floatval($discount_rules['min_cart_total'] ?? 0));
         $clean['min_cart_quantity'] = max(0, intval($discount_rules['min_cart_quantity'] ?? 0));
-        $clean['type'] = in_array($discount_rules['type'] ?? '', ['percentage', 'fixed']) ? $discount_rules['type']  : 'percentage';
-        $clean['value'] = max(0, floatval($discount_rules['value'] ?? 0));
-        $clean['cap'] = max(0, floatval($discount_rules['cap'] ?? 0));
+        $clean['type']              = in_array($discount_rules['type'] ?? '', ['percentage', 'fixed']) ? $discount_rules['type']  : 'percentage';
+        $clean['value']             = max(0, floatval($discount_rules['value'] ?? 0));
+        $clean['cap']               = max(0, floatval($discount_rules['cap'] ?? 0));
     
         // Array fields
-        $clean['products'] = array_map('absint', (array)($discount_rules['products'] ?? []));
-        $clean['categories'] = array_map(
+        $clean['products']          = array_map('absint', (array)($discount_rules['products'] ?? []));
+        $clean['categories']        = array_map(
             fn($slug) => sanitize_title($slug), 
             (array)($discount_rules['categories'] ?? [])
         );
