@@ -19,3 +19,7 @@ input[type="time"] {
     vertical-align: middle;
 }
 
+.error-field {
+  border: 1px solid red !important;
+}
+

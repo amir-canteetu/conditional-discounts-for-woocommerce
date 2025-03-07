@@ -66,7 +66,7 @@ class DiscountApplier {
     }
 
     private function calculateDiscountAmount(Discount $discount, float $price): float {
-        $amount = match($discount->get_type()) {
+        $amount = match($discount->get_discount_type()) {
             'percentage' => $price * ($discount->get_value() / 100),
             'fixed' => $discount->get_value(),
             default => 0

@@ -82,7 +82,7 @@ class RuleBuilder {
             'enabled'             => false,
             'label'               => __('New Discount', 'conditional-discounts'),
             'discount_value_type' => 'percentage',
-            'type'                => 'product',
+            'discount_type'       => 'product',
             'value'               => null,
             'cap'                 => null,
             'min_cart_total'      => 0.00,
@@ -200,7 +200,7 @@ class RuleBuilder {
         $args = array(
             'post_type'      => 'product',
             'post_status'    => 'publish',
-            'posts_per_page' => -1,       // Retrieve all products. Consider pagination if you have many products.
+            'posts_per_page' => -1,       
             'orderby'        => 'title',
             'order'          => 'ASC'
         );
@@ -276,7 +276,7 @@ class RuleBuilder {
             
             if (!isset($_POST['data'])) {
                 throw new \Exception(__('Invalid request format', 'conditional-discounts'), 400);
-            }               
+            }                 
             
             //Decodes the JSON into a PHP associative array    
             $raw_data   = json_decode(wp_unslash($_POST['data']), true);           

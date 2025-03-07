@@ -7,29 +7,26 @@ if (!defined('ABSPATH')) {
 ?>
 
 <table class="form-table" id="discount-settings-form-table">
-    <?php if (!empty($cdwc_template['errors'])) : ?>
+
     <tr valign="top">
         <td colspan="2">
-            <div id="discount-errors" class="notice notice-error" style="display: block; margin: 15px 0;">
-                <?php foreach ($cdwc_template['errors'] as $error) : ?>
-                    <p><?php echo esc_html($error); ?></p>
-                <?php endforeach; ?>
+            <div id="discount-errors" class="notice notice-error" style="display: none; margin: 15px 0;">
             </div>
         </td>
     </tr>
-    <?php endif; ?>
+
     
     <tr valign="top">
         <th scope="row"><label for="discount_type"><?php esc_html_e('Discount Type', 'conditional-discounts'); ?></label></th>
         <td>
             <select id="discount_type" name="discount_type">
-                <option value="product" <?php selected($discount->get_type(), 'product'); ?>>
+                <option value="product" <?php selected($discount->get_discount_type(), 'product'); ?>>
                     <?php esc_html_e('Product', 'conditional-discounts'); ?>
                 </option>
-                <option value="category" <?php selected($discount->get_type(), 'category'); ?>>
+                <option value="category" <?php selected($discount->get_discount_type(), 'category'); ?>>
                     <?php esc_html_e('Category', 'conditional-discounts'); ?>
                 </option>
-                <option value="tag" <?php selected($discount->get_type(), 'tag'); ?>>
+                <option value="tag" <?php selected($discount->get_discount_type(), 'tag'); ?>>
                     <?php esc_html_e('Tag', 'conditional-discounts'); ?>
                 </option>                
             </select>

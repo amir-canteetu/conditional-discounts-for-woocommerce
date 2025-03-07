@@ -122,6 +122,8 @@ class DiscountRepository {
     public function update(int $id, array $data): bool {
         $update_data = [];
         $format = [];
+        
+        \write_log($data);
 
         if(isset($data['label'])) {
             $update_data['label'] = sanitize_text_field($data['label']);

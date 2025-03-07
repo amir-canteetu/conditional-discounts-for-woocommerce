@@ -80,12 +80,13 @@ class Discount
     private array $user_roles       = [];
     private string $start_date;
     private string $end_date;
-    private string $notes;  
+    private string $notes; 
+    private string $discount_type;
     
     private RuleSet $rule_set;    
 
     public const MAX_ITEM_LIMIT = 1000000;
-    public const VALID_TYPES    = ['product', 'category', 'tag', ];
+    public const VALID_DISCOUNT_TYPES    = ['product', 'category', 'tag', ];
 
     public function __construct(int $post_id) {
         if (!get_post($post_id) || get_post_type($post_id) !== 'shop_discount') {
@@ -106,7 +107,7 @@ class Discount
         $this->meta                     = $rules ? json_decode($rules['rules'], true) : RuleBuilder::get_default_rules();           
         $this->enabled                  = ($this->meta['enabled'] ?? 'no') === 'yes';
         $this->label                    = sanitize_text_field($this->meta['label'] ?? '');
-        $this->type                     = $this->meta['type'] ?? 'product';
+        $this->discount_type            = $this->meta['discount_type'] ?? 'product';
         $this->discount_value_type      = $this->meta['discount_value_type'] ?? 'percentage';
         $this->value                    = (float)($this->meta['value'] ?? 0);
         $this->cap                      = isset($this->meta['cap']) ? (float)$this->meta['cap'] : null;   
@@ -125,12 +126,12 @@ class Discount
     
     private function validateType(string $type): string
     {
-        if (!in_array($type, self::VALID_TYPES, true)) {
+        if (!in_array($discount_type, self::VALID_DISCOUNT_TYPES, true)) {
             throw new InvalidArgumentException(
                 sprintf(__('Invalid discount type: %s', 'conditional-discounts'), $type)
             );
         }
-        return $type;
+        return $discount_type;
     } 
     
     private function parseDate(?string $date): ?DateTimeImmutable
@@ -167,10 +168,10 @@ class Discount
         return $this->enabled;
     }
 
-    public function get_type(): string
+    public function get_discount_type(): string
     {
         $this->loadMeta();
-        return $this->type;
+        return $this->discount_type;
     }
     
     public function get_discount_value_type(): string

@@ -8,51 +8,107 @@ jQuery(document).ready(function($) {
     });
   });  
 
-  function validateDiscountFields() {
+    function validateDiscountFields() {
+        
+        const errors = [];
 
-    const errors = [];
-    const $enableDiscount = $('#enable_discount');
-  
-    // Only validate if discount is enabled
-    if ($enableDiscount.is(':checked')) {
+        // Remove previous error styling
+        $('#discount-settings-form-table input, #discount-settings-form-table select').removeClass('error-field');
 
-      // Validate Discount Label
-      if ($('#discount_label').val().trim() === '') {
-        errors.push('Discount label is required');
-      }
-  
-      // Validate Discount Value
-      const discountValue = parseFloat($('#discount_value').val());
-      if (isNaN(discountValue) || discountValue <= 0) {
-        errors.push('Discount value must be a positive number');
-      } else if (
-        $('#discount_type').val() === 'percentage' && discountValue > 100
-      ) {
-        errors.push('Percentage discount cannot exceed 100%');
-      }
-  
-      // Validate Dates
-      const endDate = new Date($('#discount_end_date').val());
-      const startDate = new Date($('#discount_start_date').val());
-      
-      if (!startDate.getTime()) {errors.push('Start date is required');}
-      if (!endDate.getTime()) {errors.push('End date is required');}
-      if (startDate > endDate) {errors.push('End date must be after start date');}
-  
-      // Validate Minimum Cart Total
-      const minCartTotal = parseFloat($('#minimum_cart_total').val());
-      if (isNaN(minCartTotal) || minCartTotal < 0) {
-        errors.push('Minimum cart total must be ≥ 0');
-      }
+        const $enableDiscount = $('#enable_discount');
+
+        // Only validate if discount is enabled
+        if ($enableDiscount.is(':checked')) {
+
+          // Validate Discount Label
+          const $discountLabel = $('#discount_label');
+          if ($discountLabel.val().trim() === '') {
+            errors.push('Discount label is required');
+            $discountLabel.addClass('error-field');
+          }
+
+          // Validate Discount Value
+          const $discountValue = $('#discount_value');
+          const discountValue = parseFloat($discountValue.val());
+          if (isNaN(discountValue) || discountValue <= 0) {
+            errors.push('Discount value must be a positive number');
+            $discountValue.addClass('error-field');
+          } else if ($('#discount_value_type').val() === 'percentage' && discountValue > 100) {
+            errors.push('Percentage discount cannot exceed 100%');
+            $discountValue.addClass('error-field');
+          }
+
+        // Validate Dates and Times
+        const $startDate = $('#discount_start_date');
+        const $endDate = $('#discount_end_date');
+        const $startTime = $('#discount_start_time');
+        const $endTime = $('#discount_end_time');
+        
+        // Get combined date/time values
+        const startDateVal = $startDate.val();
+        const startTimeVal = $startTime.val();
+        const endDateVal = $endDate.val();
+        const endTimeVal = $endTime.val();
+        
+        // Create full datetime strings
+        const startDateTimeString = startDateVal && startTimeVal 
+            ? `${startDateVal}T${startTimeVal}` 
+            : null;
+        const endDateTimeString = endDateVal && endTimeVal 
+            ? `${endDateVal}T${endTimeVal}` 
+            : null;
+        
+        // Parse to Date objects
+        const startDateTime = startDateTimeString ? new Date(startDateTimeString) : null;
+        const endDateTime = endDateTimeString ? new Date(endDateTimeString) : null;
+
+        // Validate start datetime
+        if (!startDateVal || !startTimeVal) {
+            errors.push('Start date and time are required');
+            if (!startDateVal) $startDate.addClass('error-field');
+            if (!startTimeVal) $startTime.addClass('error-field');
+        } else if (!startDateTime || isNaN(startDateTime.getTime())) {
+            errors.push('Invalid start date/time combination');
+            $startDate.addClass('error-field');
+            $startTime.addClass('error-field');
+        }
+
+        // Validate end datetime
+        if (!endDateVal || !endTimeVal) {
+            errors.push('End date and time are required');
+            if (!endDateVal) $endDate.addClass('error-field');
+            if (!endTimeVal) $endTime.addClass('error-field');
+        } else if (!endDateTime || isNaN(endDateTime.getTime())) {
+            errors.push('Invalid end date/time combination');
+            $endDate.addClass('error-field');
+            $endTime.addClass('error-field');
+        }
+
+        // Validate datetime order
+        if (startDateTime && endDateTime && startDateTime >= endDateTime) {
+            errors.push('End date/time must be after start date/time');
+            $startDate.addClass('error-field');
+            $startTime.addClass('error-field');
+            $endDate.addClass('error-field');
+            $endTime.addClass('error-field');
+        }
+
+          // Validate Minimum Cart Total
+          const $minCartTotal = $('#minimum_cart_total');
+          const minCartTotal = parseFloat($minCartTotal.val());
+          if (isNaN(minCartTotal) || minCartTotal < 0) {
+            errors.push('Minimum cart total must be ≥ 0');
+            $minCartTotal.addClass('error-field');
+          }
+        }
+
+        return errors;
     }
-  
-    return errors;
-  }
   
   function showValidationErrors(errors) {
     const $errorContainer = $('#discount-errors');
     $errorContainer.empty().hide();
-    
+    console.log(errors);
     if (errors.length > 0) {
       $errorContainer.append(
         `<p><strong>Discount validation errors:</strong></p>` +
@@ -79,12 +135,10 @@ jQuery(document).ready(function($) {
 }  
 
   // Flag to avoid infinite loop when re-triggering the publish click.
-  var discountSaved = false;
+var discountSaved = false;
 
-  $('#publish').on('click', function(e) {
-
-    if (discountSaved) {return;}
-    
+$('#publish').on('click', function(e) {
+    if (discountSaved) return;
     e.preventDefault();
 
     // Clear previous errors
@@ -92,72 +146,71 @@ jQuery(document).ready(function($) {
   
     // Run validation
     const errors = validateDiscountFields();
-
     if (errors.length > 0) {
-      showValidationErrors(errors);
-      $('#publish').removeAttr('disabled');
-      return;
+        showValidationErrors(errors);
+        $('#publish').removeAttr('disabled');
+        return;
     }
   
     // Proceed with AJAX if validation passes
     $('#publish').attr('disabled', true);
 
+    // Build complete data object
     const discountData = {
-      meta: {
-          enabled: $('#enable_discount').is(':checked') ? 1 : 0,
-          label: $('#discount_label').val().trim(),
-          min_cart_total: parseFloat($('#minimum_cart_total').val()) || 0,
-          min_cart_quantity: parseInt($('#minimum_cart_quantity').val()) || 0,
-          type: $('#discount_type').val(),
-          value: parseFloat($('#discount_value').val()) || 0,
-          cap: parseFloat($('#discount_cap').val()) || 0,
-          products: $('#products_for_discount').val() || [],
-          categories: $('#categories_for_discount').val() || [],
-          tags: $('#tags_for_discount').val() || [],
-          roles: $('#applicable_user_roles').val() || [],
-          start_date: $('#discount_start_date').val(),
-          end_date: $('#discount_end_date').val()
-      },
-      post: {
-          id: $('#post_ID').val(),
-          status: $('#post_status').val()
-      }
+        meta: {
+            enabled: $('#enable_discount').is(':checked') ? 1 : 0,
+            label: $('#discount_label').val().trim(),
+            min_cart_total: parseFloat($('#minimum_cart_total').val()) || 0,
+            min_cart_quantity: parseInt($('#minimum_cart_quantity').val()) || 0,
+            discount_type: $('#discount_type').val(),
+            value_type: $('#discount_value_type').val(),
+            value: parseFloat($('#discount_value').val()) || 0,
+            cap: $('#discount_cap').val().trim() !== '' ? parseFloat($('#discount_cap').val()) : null,
+            products: $('#products_for_discount').val() || [],
+            categories: $('#categories_for_discount').val() || [],
+            tags: $('#tags_for_discount').val() || [],
+            roles: $('#applicable_user_roles').val() || [],
+            start_date: $('#discount_start_date').val() + 'T' + $('#discount_start_time').val(),
+            end_date: $('#discount_end_date').val() + 'T' + $('#discount_end_time').val()
+        },
+        post: {
+            id: $('#post_ID').val(),
+            status: $('#post_status').val(),
+            title: $('#discount_label').val().trim()
+        }
     };
 
+    // Sanitize and prepare data
+    const sanitizedData = sanitizeDiscountData(discountData);
+    const jsonData = JSON.stringify(sanitizedData);
 
-    const discount = JSON.stringify(sanitizeDiscountData(discountData));
-    console.log(discount);
-
-    // Trigger the AJAX call to save discount rules.
+    // AJAX request
     $.ajax({
         type: 'POST',
-        url: ajaxurl, // Provided by WordPress.
+        url: ajaxurl,
         data: {
             action: 'save_discount_rules',
-            data: discount,
-            nonce: cdwcRules.api.nonce  
+            data: jsonData,
+            nonce: cdwcRules.api.nonce
         },
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         success: function(response) {
             if (response.success) {
-                // Mark that discount rules are saved.
                 discountSaved = true;
-                // Optionally show a success message.
-                // Re-enable the publish button (if it was disabled).
-                $('#publish').removeAttr('disabled');
-                // Trigger the click again so the normal post save occurs.
-                $('#publish').trigger('click');
+                console.log(response);
+                //$('#publish').removeAttr('disabled').trigger('click');
             } else {
-                // Handle error; show message to the user.
-                console.log('Error saving discount rules: ' + response.data);
-                // Re-enable the publish button.
+                showValidationErrors(response.data.errors || [response.data]);
                 $('#publish').removeAttr('disabled');
             }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr) {
+            showValidationErrors(xhr.responseJSON?.data.errors);
             $('#publish').removeAttr('disabled');
         }
     });
-  });
+});
   
     function toggleDiscountFields() {
         // Hide all fields first

@@ -11,6 +11,7 @@ class RuleSanitizer {
 
 
     public static function process($discount_rules) {
+        
         $clean = [];
     
         // Basic fields
@@ -18,7 +19,8 @@ class RuleSanitizer {
         $clean['label']             = sanitize_text_field(substr($discount_rules['label'] ?? '', 0, 255));
         $clean['min_cart_total']    = max(0, floatval($discount_rules['min_cart_total'] ?? 0));
         $clean['min_cart_quantity'] = max(0, intval($discount_rules['min_cart_quantity'] ?? 0));
-        $clean['type']              = in_array($discount_rules['type'] ?? '', ['percentage', 'fixed']) ? $discount_rules['type']  : 'percentage';
+        $clean['discount_type']     = in_array($discount_rules['discount_type'] ?? '', ['category', 'product', 'tag']) ? $discount_rules['discount_type']  : 'product';
+        $clean['value_type']        = in_array($discount_rules['value_type'] ?? '', ['percentage', 'fixed']) ? $discount_rules['value_type']  : 'percentage';
         $clean['value']             = max(0, floatval($discount_rules['value'] ?? 0));
         $clean['cap']               = max(0, floatval($discount_rules['cap'] ?? 0));
     
