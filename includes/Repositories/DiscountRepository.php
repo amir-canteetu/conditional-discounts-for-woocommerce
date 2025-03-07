@@ -21,30 +21,143 @@ class DiscountRepository {
     public function __construct($wpdb) {
         $this->wpdb         = $wpdb;
         $this->table_name   = $this->wpdb->prefix . 'cdwc_discount_rules';
+    }  
+    
+    public function save(int $post_id, array $data): bool {
+
+        if (!$post_id || get_post_type($post_id) !== 'shop_discount') {
+            error_log('Invalid post ID or post type for discount creation');
+            return false;
+        }          
+
+        $exists = (bool) $this->wpdb->get_var(
+            $this->wpdb->prepare(
+                "SELECT COUNT(*) 
+                 FROM {$this->table_name} 
+                 WHERE discount_id = %d",
+                $post_id
+            )
+        );
+
+        return $exists ? $this->update($post_id, $data) : $this->create($post_id, $data);
     }    
     
-    public function create(array $data): int {
-        $post_id = wp_insert_post([
-            'post_title' => $data['label'],
-            'post_type' => 'shop_discount',
-            'post_status' => 'publish'
-        ]);
+    private function create(int $post_id, array $data): bool {  
 
-        if(is_wp_error($post_id)) {
-            throw new Exception(__('Failed to create discount', 'conditional-discounts'));
+        $insert_data = [
+            'discount_id'    => $post_id,
+            'label'          => sanitize_text_field($data['label']),
+            'version'        => sanitize_text_field($data['version']),
+            'enabled'        => (bool)$data['enabled'],
+            'discount_type'  => sanitize_text_field($data['discount_type']),
+            'rules'          => wp_json_encode([
+                'min_cart_total'     => (float)$data['min_cart_total'],
+                'min_cart_quantity'  => (int)$data['min_cart_quantity'],
+                'value_type'         => sanitize_text_field($data['value_type']),
+                'value'              => (float)$data['value'],
+                'cap'                => isset($data['cap']) ? (float)$data['cap'] : null,
+                'products'           => array_map('intval', $data['products']),
+                'categories'         => array_map('sanitize_text_field', $data['categories']),
+                'roles'              => array_map('sanitize_text_field', $data['roles']),
+                'start_date'         => sanitize_text_field($data['start_date']),
+                'end_date'           => sanitize_text_field($data['end_date'])
+            ])
+        ];
+
+        $formats = [
+            'discount_id'   => '%d',
+            'label'         => '%s',
+            'version'       => '%s',
+            'enabled'       => '%d',
+            'discount_type' => '%s',
+            'rules'         => '%s'
+        ];
+
+        $result = $this->wpdb->insert(
+            $this->table_name,
+            $insert_data,
+            $formats
+        );
+        
+        if ($result === false) {
+            error_log('Discount creation failed: ' . $this->wpdb->last_error);
+            return false;
+        }  
+        
+        return true;
+        
+    }
+
+    
+    
+    private function update(int $id, array $data): bool {
+        $update_data = [];
+        $format = [];
+
+        // Handle direct columns
+        if (isset($data['label'])) {
+            $update_data['label'] = sanitize_text_field($data['label']);
+            $format[] = '%s';
         }
 
-        $this->wpdb->insert($this->table_name, [
-            'discount_id' => $post_id,
-            'label' => sanitize_text_field($data['label']),
-            'enabled' => (bool)($data['enabled'] ?? false),
-            'rules' => json_encode($this->validateRules($data['rules']))
-        ], [
-            '%d', '%s', '%d', '%s'
-        ]);
+        if (isset($data['enabled'])) {
+            $update_data['enabled'] = (bool)$data['enabled'];
+            $format[] = '%d';
+        }
 
-        return $post_id;
-    }    
+        if (isset($data['version'])) {
+            $update_data['version'] = sanitize_text_field($data['version']);
+            $format[] = '%s';
+        }
+
+        if (isset($data['discount_type'])) {
+            $update_data['discount_type'] = sanitize_text_field($data['discount_type']);
+            $format[] = '%s';
+        }
+
+        // Always update rules JSON
+        $rules = [
+            'min_cart_total' => isset($data['min_cart_total']) ? (float)$data['min_cart_total'] : 0,
+            'min_cart_quantity' => isset($data['min_cart_quantity']) ? (int)$data['min_cart_quantity'] : 0,
+            'value_type' => isset($data['value_type']) ? sanitize_text_field($data['value_type']) : 'percentage',
+            'value' => isset($data['value']) ? (float)$data['value'] : 0,
+            'cap' => isset($data['cap']) ? (float)$data['cap'] : null,
+            'products' => array_map('intval', $data['products'] ?? []),
+            'categories' => array_map('sanitize_text_field', $data['categories'] ?? []),
+            'roles' => array_map('sanitize_text_field', $data['roles'] ?? []),
+            'start_date' => isset($data['start_date']) ? sanitize_text_field($data['start_date']) : '',
+            'end_date' => isset($data['end_date']) ? sanitize_text_field($data['end_date']) : ''
+        ];
+
+        $update_data['rules'] = wp_json_encode($rules);
+        $format[] = '%s';  
+
+        if (!empty($update_data)) {
+           $rows_affected = $this->wpdb->update(
+                    $this->table_name,
+                    $update_data,
+                    ['discount_id' => $id],
+                    $format,
+                    ['%d'] 
+            );
+           
+            if (!$rows_affected) {
+                error_log('Database update failed: ' . $this->wpdb->last_error);
+                return false;
+            }           
+           
+        }
+
+        // Update WordPress post title if label changed
+        if (isset($data['label'])) {
+            wp_update_post([
+                'ID' => $id,
+                'post_title' => $update_data['label']
+            ]);
+        }
+
+        return true;
+    }      
     
     /**
      * Find a discount by ID.
@@ -117,51 +230,7 @@ class DiscountRepository {
             'created_at' => $data['created_at'],
             'updated_at' => $data['updated_at']
         ];
-    } 
-    
-    public function update(int $id, array $data): bool {
-        $update_data = [];
-        $format = [];
-        
-        \write_log($data);
-
-        if(isset($data['label'])) {
-            $update_data['label'] = sanitize_text_field($data['label']);
-            $format[] = '%s';
-        }
-
-        if(isset($data['enabled'])) {
-            $update_data['enabled'] = (bool)$data['enabled'];
-            $format[] = '%d';
-        }
-
-//        if(isset($data['rules'])) {
-//            $update_data['rules'] = json_encode($this->validateRules($data['rules']));
-//            $format[] = '%s';
-//        }
-//        
-//        \write_log($update_data);
-
-        if(!empty($update_data)) {
-            $this->wpdb->update(
-                $this->table_name,
-                $update_data,
-                ['discount_id' => $id],
-                $format,
-                ['%d']
-            );
-        }
-
-        // Update post title if label changed
-        if(isset($data['label'])) {
-            wp_update_post([
-                'ID' => $id,
-                'post_title' => $data['label']
-            ]);
-        }
-
-        return true;
-    }       
+    }          
 
 
     /**

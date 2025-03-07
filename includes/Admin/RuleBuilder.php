@@ -285,12 +285,6 @@ class RuleBuilder {
                 throw new \Exception(__('Malformed request data', 'conditional-discounts'), 400);
             }
             
-            $post_id    = isset($raw_data['post']['id']) ? (int) $raw_data['post']['id'] : 0;   
-                    
-            if ( ! current_user_can( 'edit_shop_discount', $post_id ) ) {
-                throw new \Exception(__('Insufficient permissions', 'conditional-discounts'), 400);
-            } 
-            
             $data = wp_parse_args($raw_data, [
                 'meta' => [],
                 'post' => ['id' => 0, 'status' => '']
@@ -302,10 +296,12 @@ class RuleBuilder {
                 throw new \Exception(__('Invalid discount entry', 'conditional-discounts'), 400);
             }
         
-            // Check post ownership/capability
-            if (!current_user_can('edit_post', $post_id)) {
-                throw new \Exception(__('Unauthorized access', 'conditional-discounts'), 403);
+            if ( ! current_user_can( 'edit_shop_discount', $post_id ) ) {
+                throw new \Exception(__('Insufficient permissions', 'conditional-discounts'), 400);
             } 
+            
+            $data['meta']['discount_id']    = $post_id;
+            $data['meta']['version']        = CDWC_SCHEMA_VERSION;
             
             // Sanitize data
             $sanitized_rules    = RuleSanitizer::process($data['meta']);
@@ -317,13 +313,10 @@ class RuleBuilder {
                     'errors' => $validation_errors
                 ], 422);
             }
-    
+
             global $wpdb;
             $repository = new DiscountRepository($wpdb);
-            $repository->update($post_id, [
-                'rules' => $sanitized_rules,
-                'label' => sanitize_text_field($_POST['post_title']),
-            ]);
+            $repository->save($post_id, $sanitized_rules);
     
             wp_send_json_success([
                 'message' => __('Discount rules saved successfully', 'conditional-discounts'),

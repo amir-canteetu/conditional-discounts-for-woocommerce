@@ -29,6 +29,8 @@ foreach ($constants as $name => $value) {
 $plugin_data = get_file_data(__FILE__, ['Version' => 'Version'], 'plugin');
 define('CDWC_PLUGIN_VERSION', $plugin_data['Version']);
 
+define('CDWC_SCHEMA_VERSION', '1.0.0' );
+
 // Autoload classes using Composer's autoloader
 require_once __DIR__ . '/vendor/autoload.php';
 

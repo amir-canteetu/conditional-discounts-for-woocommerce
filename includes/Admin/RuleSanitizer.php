@@ -23,6 +23,8 @@ class RuleSanitizer {
         $clean['value_type']        = in_array($discount_rules['value_type'] ?? '', ['percentage', 'fixed']) ? $discount_rules['value_type']  : 'percentage';
         $clean['value']             = max(0, floatval($discount_rules['value'] ?? 0));
         $clean['cap']               = max(0, floatval($discount_rules['cap'] ?? 0));
+        $clean['discount_id']       = intval($discount_rules['discount_id'] ?? 0);
+        $clean['version']           = sanitize_text_field($discount_rules['version'] ?? CDWC_SCHEMA_VERSION);
     
         // Array fields
         $clean['products']          = array_map('absint', (array)($discount_rules['products'] ?? []));
@@ -36,8 +38,8 @@ class RuleSanitizer {
         );
     
         // Date validation
-        $clean['start_date'] = sanitize_text_field($discount_rules['start_date'] ?? '');
-        $clean['end_date'] = sanitize_text_field($discount_rules['end_date'] ?? '');
+        $clean['start_date']        = sanitize_text_field($discount_rules['start_date'] ?? '');
+        $clean['end_date']          = sanitize_text_field($discount_rules['end_date'] ?? '');
     
         return $clean;
     }
