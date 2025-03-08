@@ -315,12 +315,21 @@ class RuleBuilder {
             }
 
             global $wpdb;
-            $repository = new DiscountRepository($wpdb);
-            $repository->save($post_id, $sanitized_rules);
-    
+            $repository         = new DiscountRepository($wpdb);
+            $discountExists     = $repository->discountExists($post_id);
+            
+            if( $discountExists ){
+                $repository->update($post_id, $sanitized_rules);
+            } else {
+                $repository->create($post_id, $sanitized_rules);
+            }
+            
             wp_send_json_success([
-                'message' => __('Discount rules saved successfully', 'conditional-discounts'),
-                'data' => $sanitized_rules
+                'message' => $discountExists ? __('Discount updated') : __('Discount created'),
+                'data' => [
+                    'post_id' => $post_id,
+                    'redirect' => ! $discountExists ? admin_url("post.php?post={$post_id}&action=edit") : ''
+                ]
             ]);
 
         }  catch (\Exception $e) {

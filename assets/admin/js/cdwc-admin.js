@@ -135,82 +135,92 @@ jQuery(document).ready(function($) {
 }  
 
   // Flag to avoid infinite loop when re-triggering the publish click.
-var discountSaved = false;
+    var discountSaved = false;
 
-$('#publish').on('click', function(e) {
-    if (discountSaved) return;
-    e.preventDefault();
+    $('#publish').on('click', function(e) {
+        if (discountSaved) return;
+        e.preventDefault();
 
-    // Clear previous errors
-    $('#discount-errors').hide().empty();
-  
-    // Run validation
-    const errors = validateDiscountFields();
-    if (errors.length > 0) {
-        showValidationErrors(errors);
-        $('#publish').removeAttr('disabled');
-        return;
-    }
-  
-    // Proceed with AJAX if validation passes
-    $('#publish').attr('disabled', true);
+        // Clear previous errors
+        $('#discount-errors').hide().empty();
 
-    // Build complete data object
-    const discountData = {
-        meta: {
-            enabled: $('#enable_discount').is(':checked') ? 1 : 0,
-            label: $('#discount_label').val().trim(),
-            min_cart_total: parseFloat($('#minimum_cart_total').val()) || 0,
-            min_cart_quantity: parseInt($('#minimum_cart_quantity').val()) || 0,
-            discount_type: $('#discount_type').val(),
-            value_type: $('#discount_value_type').val(),
-            value: parseFloat($('#discount_value').val()) || 0,
-            cap: $('#discount_cap').val().trim() !== '' ? parseFloat($('#discount_cap').val()) : null,
-            products: $('#products_for_discount').val() || [],
-            categories: $('#categories_for_discount').val() || [],
-            tags: $('#tags_for_discount').val() || [],
-            roles: $('#applicable_user_roles').val() || [],
-            start_date: $('#discount_start_date').val() + 'T' + $('#discount_start_time').val(),
-            end_date: $('#discount_end_date').val() + 'T' + $('#discount_end_time').val()
-        },
-        post: {
-            id: $('#post_ID').val(),
-            status: $('#post_status').val(),
-            title: $('#discount_label').val().trim()
+        // Run validation
+        const errors = validateDiscountFields();
+        if (errors.length > 0) {
+            showValidationErrors(errors);
+            $('#publish').removeAttr('disabled');
+            return;
         }
-    };
 
-    // Sanitize and prepare data
-    const sanitizedData = sanitizeDiscountData(discountData);
-    const jsonData = JSON.stringify(sanitizedData);
+        // Proceed with AJAX if validation passes
+        $('#publish').attr('disabled', true);
 
-    // AJAX request
-    $.ajax({
-        type: 'POST',
-        url: ajaxurl,
-        data: {
-            action: 'save_discount_rules',
-            data: jsonData,
-            nonce: cdwcRules.api.nonce
-        },
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        success: function(response) {
-            if (response.success) {
-                discountSaved = true;
-                console.log(response);
-                //$('#publish').removeAttr('disabled').trigger('click');
-            } else {
-                showValidationErrors(response.data.errors || [response.data]);
+        // Build complete data object
+        const discountData = {
+            meta: {
+                enabled: $('#enable_discount').is(':checked') ? 1 : 0,
+                label: $('#discount_label').val().trim(),
+                min_cart_total: parseFloat($('#minimum_cart_total').val()) || 0,
+                min_cart_quantity: parseInt($('#minimum_cart_quantity').val()) || 0,
+                discount_type: $('#discount_type').val(),
+                value_type: $('#discount_value_type').val(),
+                value: parseFloat($('#discount_value').val()) || 0,
+                cap: $('#discount_cap').val().trim() !== '' ? parseFloat($('#discount_cap').val()) : null,
+                products: $('#products_for_discount').val() || [],
+                categories: $('#categories_for_discount').val() || [],
+                tags: $('#tags_for_discount').val() || [],
+                roles: $('#applicable_user_roles').val() || [],
+                start_date: $('#discount_start_date').val() + 'T' + $('#discount_start_time').val(),
+                end_date: $('#discount_end_date').val() + 'T' + $('#discount_end_time').val()
+            },
+            post: {
+                id: $('#post_ID').val(),
+                status: $('#post_status').val(),
+                title: $('#discount_label').val().trim()
+            }
+        };
+
+        // Sanitize and prepare data
+        const sanitizedData = sanitizeDiscountData(discountData);
+        const jsonData = JSON.stringify(sanitizedData);
+
+        // AJAX request
+        $.ajax({
+            type: 'POST',
+            url: ajaxurl,
+            data: {
+                action: 'save_discount_rules',
+                data: jsonData,
+                nonce: cdwcRules.api.nonce
+            },
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function(response) {
+                if (response.success) {
+                    discountSaved = true;
+                    $('#publish').removeAttr('disabled');
+                    if (response.data.data.redirect) {
+                        console.log(response.data.data.redirect);
+                        window.location.href = response.data.data.redirect;
+                    } else {
+                        $('#message').remove();
+                        $('.wrap').prepend(
+                            '<div id="message" class="notice notice-success is-dismissible">' +
+                            '<p>' + response.data.message + '</p>' +
+                            '</div>'
+                        );
+                    }
+                } else {
+                    showValidationErrors(response.data.errors || [response.data]);
+                    $('#publish').removeAttr('disabled');
+                }
+            },
+            error: function(xhr) {
+                showValidationErrors(xhr.responseJSON?.data.errors);
                 $('#publish').removeAttr('disabled');
             }
-        },
-        error: function(xhr) {
-            showValidationErrors(xhr.responseJSON?.data.errors);
-            $('#publish').removeAttr('disabled');
-        }
+        });
     });
-});
   
     function toggleDiscountFields() {
         // Hide all fields first

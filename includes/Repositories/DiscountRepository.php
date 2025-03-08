@@ -23,26 +23,23 @@ class DiscountRepository {
         $this->table_name   = $this->wpdb->prefix . 'cdwc_discount_rules';
     }  
     
-    public function save(int $post_id, array $data): bool {
-
-        if (!$post_id || get_post_type($post_id) !== 'shop_discount') {
-            error_log('Invalid post ID or post type for discount creation');
-            return false;
-        }          
-
-        $exists = (bool) $this->wpdb->get_var(
+    public function discountExists(int $post_id): bool {
+        $result = $this->wpdb->get_var(
             $this->wpdb->prepare(
-                "SELECT COUNT(*) 
-                 FROM {$this->table_name} 
-                 WHERE discount_id = %d",
+                "SELECT 1 FROM {$this->table_name} WHERE discount_id = %d LIMIT 1",
                 $post_id
             )
         );
 
-        return $exists ? $this->update($post_id, $data) : $this->create($post_id, $data);
-    }    
+        if ($this->wpdb->last_error) {
+            error_log("Discount check failed: " . $this->wpdb->last_error);
+            return false;
+        }
+
+        return (bool)$result;
+    }
     
-    private function create(int $post_id, array $data): bool {  
+    public function create(int $post_id, array $data): bool {  
 
         $insert_data = [
             'discount_id'    => $post_id,
@@ -84,13 +81,19 @@ class DiscountRepository {
             return false;
         }  
         
+        wp_update_post([
+            'ID' => $post_id,
+            'post_status' => 'publish',
+            'post_title' => $insert_data['label']
+        ]);        
+        
         return true;
         
     }
 
     
     
-    private function update(int $id, array $data): bool {
+    public function update(int $id, array $data): bool {
         $update_data = [];
         $format = [];
 
