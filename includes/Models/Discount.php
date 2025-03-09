@@ -103,8 +103,8 @@ class Discount
 
         global $wpdb;
         $table_name                     = $wpdb->prefix . 'cdwc_discount_rules';
-        $rules                          = $wpdb->get_row( $wpdb->prepare("SELECT rules FROM $table_name WHERE discount_id = %d", $this->id), ARRAY_A );
-        $this->meta                     = $rules ? json_decode($rules['rules'], true) : RuleBuilder::get_default_rules();           
+        $rules                          = $wpdb->get_row( $wpdb->prepare("SELECT rules FROM $table_name WHERE discount_id = %d", $this->id), ARRAY_A );                
+        $this->meta                     = $rules ? json_decode($rules['rules'], true) : RuleBuilder::get_default_rules();  
         $this->enabled                  = ($this->meta['enabled'] ?? 'no') === 'yes';
         $this->label                    = sanitize_text_field($this->meta['label'] ?? '');
         $this->discount_type            = $this->meta['discount_type'] ?? 'product';
@@ -117,18 +117,18 @@ class Discount
         $this->categories               = array_map('intval', (array)($this->meta['categories'] ?? []));
         $this->tags                     = array_map('intval', (array)($this->meta['tags'] ?? []));
         $this->user_roles               = (array)($this->meta['user_roles'] ?? []);
-        $this->start_date               = $this->meta['validity']['start_date'];
-        $this->end_date                 = $this->meta['validity']['end_date'];    
+        $this->start_date               = $this->meta['start_date'];
+        $this->end_date                 = $this->meta['end_date'];    
         $this->notes                    = sanitize_text_field($this->meta['notes'] ?? '');
         $this->rule_set                 = new RuleSet($this->meta['rule_set'] ?? []);
         $this->meta_loaded              = true;
     }
     
-    private function validateType(string $type): string
+    private function validateType(string $discount_type): string
     {
         if (!in_array($discount_type, self::VALID_DISCOUNT_TYPES, true)) {
             throw new InvalidArgumentException(
-                sprintf(__('Invalid discount type: %s', 'conditional-discounts'), $type)
+                sprintf(__('Invalid discount type: %s', 'conditional-discounts'), $discount_type)
             );
         }
         return $discount_type;
@@ -173,6 +173,19 @@ class Discount
         $this->loadMeta();
         return $this->discount_type;
     }
+    
+    /**
+     * Get discount types.
+     *
+     * @return array
+     */
+    public static function get_discount_types(): array {
+            return  array(
+                            'product'       => __( 'Product discount', 'conditional-discounts' ),
+                            'category'      => __( 'Category discount', 'conditional-discounts' ),
+                            'tag'           => __( 'Tag discount', 'conditional-discounts' ),
+                        );
+    }    
     
     public function get_discount_value_type(): string
     {

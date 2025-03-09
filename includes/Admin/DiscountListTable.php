@@ -23,13 +23,15 @@ class DiscountListTable extends \WC_Admin_List_Table {
          * @var string
          */
         protected $list_table_type = 'shop_discount';
+        
         private $discount_object_cache = [];     
 
         public function __construct() {
             parent::__construct();
-            add_filter('disable_months_dropdown', '__return_true');
+            $this->table_name = $GLOBALS['wpdb']->prefix . 'cdwc_discount_rules';
         }
-
+        
+        
         /**
          * Render blank state.
          */
@@ -39,6 +41,90 @@ class DiscountListTable extends \WC_Admin_List_Table {
             echo '<a class="woocommerce-BlankState-cta button-primary button" href="' . esc_url( admin_url( 'post-new.php?post_type=shop_discount' ) ) . '">' . esc_html__( 'Create your first discount', 'conditional-discounts' ) . '</a>';
             echo '</div>';
         } 
+
+	protected function render_filters() {
+		?>
+		<select name="discount_type" id="dropdown_shop_discount_type">
+			<option value=""><?php esc_html_e( 'Show all types', 'conditional-discounts' ); ?></option>
+			<?php
+			$discount_type = Discount::get_discount_types();
+
+			foreach ( $discount_type as $name => $type ) {
+				echo '<option value="' . esc_attr( $name ) . '"';
+
+				if ( isset( $_GET['discount_type'] ) ) {  
+					selected( $name, sanitize_text_field( wp_unslash( $_GET['discount_type'] ) ) );  
+				}
+
+				echo '>' . esc_html( $type ) . '</option>';
+			}
+			?>
+		</select>
+		<?php
+	}        
+        
+        
+        public function get_columns() {
+            return [
+                'cb'        => '<input type="checkbox" />', // Checkbox for bulk actions
+                'label'     => __('Label', 'conditional-discounts'),
+                'type'      => __('Type', 'conditional-discounts'),
+                'value'     => __('Value', 'conditional-discounts'),
+                'dates'     => __('Validity', 'conditional-discounts'),
+                'status'    => __('Status', 'conditional-discounts'),
+            ];
+        }  
+        
+        public function prepare_items() {
+            global $wpdb;
+
+            $per_page = 20;
+            $current_page = $this->get_pagenum();
+
+            // Query your custom table
+            $query = $wpdb->prepare(
+                "SELECT * FROM {$this->table_name} 
+                 ORDER BY discount_id DESC 
+                 LIMIT %d OFFSET %d",
+                $per_page,
+                ($current_page - 1) * $per_page
+            );
+
+            $this->items = $wpdb->get_results($query, ARRAY_A);
+
+            // Set pagination
+            $total_items = $wpdb->get_var("SELECT COUNT(*) FROM {$this->table_name}");
+            $this->set_pagination_args([
+                'total_items' => $total_items,
+                'per_page'    => $per_page,
+            ]);
+        }    
+        
+        
+        protected function column_label($item) {
+            $edit_url = admin_url("post.php?post={$item['discount_id']}&action=edit");
+            return sprintf(
+                '<strong><a href="%s">%s</a></strong>',
+                $edit_url,
+                esc_html($item['label'])
+            );
+        }
+
+        protected function column_status($item) {
+            return $item['enabled'] 
+                ? '<span class="status-enabled">' . __('Enabled', 'conditional-discounts') . '</span>'
+                : '<span class="status-disabled">' . __('Disabled', 'conditional-discounts') . '</span>';
+        }    
+        
+        // Define bulk actions
+        public function get_bulk_actions() {
+            return [
+                'enable'  => __('Enable', 'conditional-discounts'),
+                'disable' => __('Disable', 'conditional-discounts'),
+                'delete'  => __('Delete', 'conditional-discounts'),
+            ];
+        }        
+                
         
 	/**
 	 * Define which columns to show on this screen.
