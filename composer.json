@@ -7,14 +7,12 @@
       "Supreme\\ConditionalDiscounts\\": "includes/"
     }
   },
-  "authors": [
-    {
-      "name": "amir-canteetu",
-      "email": "amircanteetu@gmail.com"
+    "require": {
+        "php": ">=7.2"
+    },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
     }
-  ],
-  "require": {
-    "php-di/php-di": "^7.0",
-    "justinrainbow/json-schema": "^6.1"
   }
 }
