@@ -93,38 +93,47 @@ jQuery(function($) {
         const symbol = $(this).val() === 'percentage' ? '%' : cdwcAdmin.currency_symbol;
         $('#discount_value').next('.description').text(symbol);
     }).trigger('change');
-    
-    
-    
-    
-    
-     const $discountType = $('#discount_type');
-    const fields = {
-        product: $('select[name="discount[products][]"]').closest('.form-field'),
-        category: $('select[name="discount[categories][]"]').closest('.form-field'),
-        tag: $('select[name="discount[tags][]"]').closest('.form-field')
-    };
 
-    function toggleFields() {
-        const type = $discountType.val();
+    
         
-        // Hide all first
-        Object.values(fields).forEach($field => {
-            $field.addClass('hidden');
-        });
+    const $discountType     = $('#discount_type');
+    const $productField     = $('#product-field');
+    const $categoryField    = $('#category-field');
+    const $tagField         = $('#tag-field');
+    const $brandField       = $('#brand-field');
+
+    // Function to toggle visibility
+    function toggleDiscountFields() {
+        const discountType = $discountType.val();
         
-        // Show selected
-        if (fields[type]) {
-            fields[type].removeClass('hidden');
+        // Hide all fields first
+        $productField.hide();
+        $categoryField.hide();
+        $tagField.hide();
+        $brandField.hide();
+
+        // Show relevant field based on selected type
+        switch(discountType) {
+            case 'product':
+                $productField.show();
+                break;
+            case 'category':
+                $categoryField.show();
+                break;
+            case 'tag':
+                $tagField.show();
+                break;
+            case 'brand':
+                $brandField.show();
+                break;                
         }
     }
 
-    // Initial state
-    toggleFields();
-    
-    // Change handler
-    $discountType.on('change', toggleFields);   
-    
+    // Run on page load
+    toggleDiscountFields();
+
+    // Update on change
+    $discountType.on('change', toggleDiscountFields);
     
     
 });

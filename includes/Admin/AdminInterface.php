@@ -79,6 +79,7 @@ class AdminInterface {
                 'discount_cap' => 0,
                 'max_use' => 1,
                 'products' => [],
+                'brands' => [],
                 'categories' => [],
                 'tags' => [],
                 'roles' => [],
@@ -94,7 +95,10 @@ class AdminInterface {
                 'search_products' => __('Search products...', 'conditional-discounts'),
                 'search_cats' => __('Search categories...', 'conditional-discounts'),
                 'search_tags' => __('Search tags...', 'conditional-discounts'),
-            ];            
+                'search_brands' => __('Search brands...', 'conditional-discounts'),
+            ];   
+            
+            \write_log($discount);
             
             $this->enqueue_assets();
             
@@ -188,7 +192,7 @@ class AdminInterface {
         $taxonomy = isset($_GET['taxonomy']) ? sanitize_key($_GET['taxonomy']) : '';
         $page = isset($_GET['page']) ? absint($_GET['page']) : 1;
 
-        $valid_taxonomies = ['product_cat', 'product_tag'];
+        $valid_taxonomies = ['product_cat', 'product_tag', 'product_brand'];
         if (!in_array($taxonomy, $valid_taxonomies, true)) {
             wp_send_json_error('Invalid taxonomy');
         }
@@ -274,13 +278,14 @@ class AdminInterface {
             $sanitized_data['max_use']              = max(0, intval($input['max_use'] ?? 1));
 
             // Select fields
-            $sanitized_data['discount_type']    = in_array($input['discount_type'] ?? '', ['product', 'category', 'tag'])  ? $input['discount_type']  : 'product';
+            $sanitized_data['discount_type']    = in_array($input['discount_type'] ?? '', ['product', 'category', 'tag', 'brand'])  ? $input['discount_type']  : 'product';
             $sanitized_data['value_type']       = in_array($input['value_type'] ?? '', ['percentage', 'fixed']) ? $input['value_type']  : 'percentage';
 
             // Array fields
             $sanitized_data['products']     = isset($input['products'])  ? array_map('absint', (array)$input['products'])  : [];
             $sanitized_data['categories']   = isset($input['categories'])  ? array_map('absint', (array)$input['categories']) : [];
             $sanitized_data['tags']         = isset($input['tags'])  ? array_map('absint', (array)$input['tags'])  : [];
+            $sanitized_data['brands']       = isset($input['brands'])   ? array_map('absint', (array)$input['brands'])   : [];
             $sanitized_data['roles']        = isset($input['roles'])  ? array_map('sanitize_key', (array)$input['roles'])  : [];
 
             // Date fields

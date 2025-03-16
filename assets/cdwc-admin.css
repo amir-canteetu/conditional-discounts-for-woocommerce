@@ -71,3 +71,54 @@
     padding: 10px 10px 10px 10px;
     
 }
+
+
+
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.form-table th {
+    width: 25%;
+    text-align: left;
+    padding: 20px;
+    vertical-align: top;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.form-table td {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.form-table tr:last-child th,
+.form-table tr:last-child td {
+    border-bottom: none;
+}
+
+.form-table input[type="text"],
+.form-table input[type="number"],
+.form-table select {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-table .cdwc-product-search,
+.form-table .cdwc-taxonomy-search {
+    width: 100% !important;
+    max-width: 100%;
+}
+
+.form-table .description {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+}
+
+.role-checkboxes label {
+    display: block;
+    margin: 5px 0;
+}
+
