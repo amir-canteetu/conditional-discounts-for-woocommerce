@@ -140,11 +140,8 @@ jQuery(function($) {
 
     function updateValueTypeDisplay() {
         const valueType = $('#value_type').val();
-        const $description = $('#discount_value').next('.description');
-        
-        $description.text(
-            valueType === 'percentage' ? '%' : currencySymbol
-        );
+        const symbol = valueType === 'percentage' ? '%' : cdwcAdmin.currency_symbol;
+        $('.symbol').text(symbol);
     }
 
     updateValueTypeDisplay();    

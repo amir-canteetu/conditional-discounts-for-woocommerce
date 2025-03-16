@@ -93,9 +93,16 @@
                     </label>
                 </th>
                 <td>
-                    <input type="number" name="discount[value]" id="discount_value" value="<?php echo esc_attr($value); ?>" class="small-text" min="0" step="0.01">
-                    <span class="description">
-                    </span>
+                    <div class="value-input-wrapper">
+                        <span class="symbol">
+                            <?php echo ($value_type === 'percentage') ? '%' : get_woocommerce_currency_symbol(); ?>
+                        </span>
+                        <input type="number" name="discount[value]" id="discount_value" 
+                               value="<?php echo esc_attr($value); ?>" 
+                               class="small-text" 
+                               min="0" 
+                               step="0.01">
+                    </div>
                 </td>
             </tr>
             
