@@ -12,7 +12,7 @@
 <div class="discount-rules-container">
     <?php echo $nonce_field; ?>
     
-    <table class="form-table widefat">
+    <table class="form-table widefat" id="discount-table">
         <tbody>
             <!-- Enable Discount -->
             <tr>
