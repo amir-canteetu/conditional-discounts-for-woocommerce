@@ -98,7 +98,18 @@ class AdminInterface {
                 'search_brands' => __('Search brands...', 'conditional-discounts'),
             ];   
             
-            \write_log($discount);
+            $selected_products = [];
+            if (!empty($discount['products'])) {
+                $products = wc_get_products([
+                    'include' => $discount['products'],
+                    'limit' => -1,
+                ]);
+                foreach ($products as $product) {
+                    $selected_products[$product->get_id()] = $product->get_formatted_name();
+                }
+            }
+
+            $discount['selected_products'] = $selected_products;
             
             $this->enqueue_assets();
             

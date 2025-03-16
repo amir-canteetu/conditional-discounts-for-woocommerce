@@ -122,10 +122,9 @@
                     <select name="discount[products][]" 
                             class="cdwc-product-search" 
                             multiple="multiple"
-                            data-placeholder="<?php echo esc_attr($labels['search_products']); ?>"
-                            data-taxonomy="product">
-                        <?php foreach ($products as $id => $name) : ?>
-                            <option value="<?php echo esc_attr($id); ?>" selected>
+                            data-placeholder="<?php echo esc_attr($labels['search_products']); ?>">
+                        <?php foreach ($selected_products as $id => $name) : ?>
+                            <option value="<?php echo esc_attr($id); ?>" selected="selected">
                                 <?php echo esc_html($name); ?>
                             </option>
                         <?php endforeach; ?>
