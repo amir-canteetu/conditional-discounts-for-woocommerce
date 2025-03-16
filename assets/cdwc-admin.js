@@ -136,4 +136,18 @@ jQuery(function($) {
     $discountType.on('change', toggleDiscountFields);
     
     
+    const currencySymbol = cdwcAdmin.currency_symbol;
+
+    function updateValueTypeDisplay() {
+        const valueType = $('#value_type').val();
+        const $description = $('#discount_value').next('.description');
+        
+        $description.text(
+            valueType === 'percentage' ? '%' : currencySymbol
+        );
+    }
+
+    updateValueTypeDisplay();    
+    $('#value_type').on('change', updateValueTypeDisplay);
+    
 });

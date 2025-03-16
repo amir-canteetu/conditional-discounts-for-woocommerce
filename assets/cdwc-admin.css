@@ -10,29 +10,13 @@
     padding-left: 20px;
 }
 
-.discount-rules-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
+
 
 .options-group {
     flex: 1 1 70%;
     min-width: 300px;  
 }
 
-/* If you need a left-aligned element */
-.other-element {
-    flex: 1 1 calc(30% - 20px);
-}
-
-/* Best solution using CSS grid */
-.discount-rules-container {
-    display: grid;
-    grid-template-columns: 30% 70%;
-    gap: 20px;
-    align-items: start;
-}
 
 .options-group {
     grid-column: 2;
@@ -46,9 +30,6 @@
 .discount-rules-container {
     display: flex;
     gap: 20px;
-    background: #fafafa;
-    padding: 15px 0 15px 15px;
-
 }
 
 
@@ -57,8 +38,6 @@
     background: #fff;
     padding: 20px;
     padding-right:0;
-    border: 1px solid #ddd;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
 }
 
 /* Reset float and add flex child */
@@ -69,7 +48,6 @@
 
 .form-field {
     padding: 10px 10px 10px 10px;
-    
 }
 
 

@@ -156,7 +156,8 @@ class AdminInterface {
                 'search_products' => __('Search products...', 'conditional-discounts'),
                 'search_cats'     => __('Search categories...', 'conditional-discounts'),
                 'search_tags'     => __('Search tags...', 'conditional-discounts'),
-            ]
+            ],
+            'currency_symbol' => get_woocommerce_currency_symbol()
         ]);
     }
     
