@@ -109,7 +109,8 @@ class AdminInterface {
                 }
             }
 
-            $discount['selected_products'] = $selected_products;
+            $discount['selected_products']  = $selected_products;
+            $discount['currency_symbol']    = get_woocommerce_currency_symbol();
             
             $this->enqueue_assets();
             

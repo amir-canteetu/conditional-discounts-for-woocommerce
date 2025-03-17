@@ -122,7 +122,7 @@
     color: #666;
 }
 
-#discount_value, #discount_cap {
+#discount_value, #discount_cap, #discount_min_cart_total {
     padding-left: 25px !important; 
     width:100%;
 }

@@ -61,7 +61,7 @@
                 <td>
                     <input type="text" name="discount[label]" value="<?php echo esc_attr($label); ?>" class="regular-text">
                     <p class="description">
-                        <?php _e('This will be displayed in the cart.', 'conditional-discounts'); ?>
+                        <?php _e("Customer-facing name for this discount that will appear in the cart and checkout. Make it clear and recognizable (e.g., 'Summer Sale Discount').", 'conditional-discounts'); ?>
                     </p>
                 </td>
             </tr>
@@ -82,6 +82,27 @@
                             <?php _e('Fixed Amount', 'conditional-discounts'); ?>
                         </option>
                     </select>
+                        <p class="description">
+                            <?php
+                            $description = sprintf(
+                                __("Choose how discounts are calculated:\n
+                                    • Percentage: Discount applied to each eligible product's price (Example: 10%% off every qualifying product)\n
+                                    Discount Cap (below) limits the total discount amount\n
+                                    • Fixed Amount: Flat rate discount per eligible item (Example: %s5 off every qualifying product)", 
+                                    'conditional-discounts'
+                                ),
+                                $currency_symbol
+                            );
+
+                            // Normalize line breaks (convert Windows and Mac line breaks to Unix style)
+                            $description = str_replace(["\r\n", "\r"], "\n", $description);
+
+                            // Replace single newlines with a single <br> tag
+                            $description = preg_replace('/\n+/', '<br>', esc_html($description));
+
+                            echo $description;
+                            ?>
+                        </p>          
                 </td>
             </tr>
 
@@ -95,7 +116,7 @@
                 <td>
                     <div class="input-wrapper" id="value-input-wrapper">
                         <span class="symbol">
-                            <?php echo ($value_type === 'percentage') ? '%' : get_woocommerce_currency_symbol(); ?>
+                            <?php echo ($value_type === 'percentage') ? '%' : $currency_symbol; ?>
                         </span>
                         <input type="number" name="discount[value]" id="discount_value" 
                                value="<?php echo esc_attr($value); ?>" 
@@ -114,12 +135,12 @@
                 <td>
                     <div class="input-wrapper">
                         <span class="symbol">
-                            <?php echo get_woocommerce_currency_symbol(); ?>
+                            <?php echo html_entity_decode($currency_symbol); ?>
                         </span>                    
-                        <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0">
+                        <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0" step="any">
                     </div>
                         <p class="description">
-                            <?php _e('0 for unlimited cap', 'conditional-discounts'); ?>
+                            <?php _e("Maximum discount amount allowed when using percentage-based discounts. Enter 0 to allow unlimited discounts.", 'conditional-discounts'); ?>
                         </p>
                 </td>
             </tr>            
@@ -232,8 +253,16 @@
 		   <label for="discount_min_cart_total"><?php _e('Minimum Cart Total', 'conditional-discounts'); ?></label>
                 </th>
                 <td>
-		 <input type="number" name="discount[min_cart_total]" id="discount_min_cart_total" value="<?php echo esc_attr($min_cart_total); ?>" min="0" step="0.01">
-                </td>
+                    <div class="input-wrapper">
+                        <span class="symbol">
+                            <?php echo $currency_symbol; ?>
+                        </span>                    
+                        <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[min_cart_total]" id="discount_min_cart_total" value="<?php echo esc_attr($min_cart_total); ?>" min="0" step="any">
+                    </div>
+                    <p class="description">
+                        <?php _e('The minimum cart subtotal (before discounts and taxes) required to activate this discount. Set to 0 to apply regardless of cart total.', 'conditional-discounts'); ?>
+                    </p>                    
+                </td>             
             </tr>   
             
             <!-- Minimum Cart Quantity -->
@@ -242,7 +271,10 @@
 		   <label for="discount_min_cart_quantity"><?php _e('Minimum Cart Quantity', 'conditional-discounts'); ?></label>
                 </th>
                 <td>
-		 <input type="number" name="discount[min_cart_quantity]" id="discount_min_cart_quantity" value="<?php echo esc_attr($min_cart_quantity); ?>" min="0">
+		 <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[min_cart_quantity]" id="discount_min_cart_quantity" value="<?php echo esc_attr($min_cart_quantity); ?>" min="0" step="1">
+                    <p class="description">
+                        <?php _e('The minimum number of items needed in the cart to qualify for this discount. Set to 0 to apply to carts of any size.', 'conditional-discounts'); ?>
+                    </p>                   
                 </td>
             </tr>        
             
@@ -252,10 +284,10 @@
 		   <label for="max_use"><?php _e('Maximum Uses', 'conditional-discounts'); ?></label>
                 </th>
                 <td>
-                    <input type="number" name="discount[max_use]" id="max_use" value="<?php echo esc_attr($max_use); ?>" min="0">
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[max_use]" id="max_use" value="<?php echo esc_attr($max_use); ?>" min="0">
                     <p class="description">
-                        <?php _e('0 for unlimited uses', 'conditional-discounts'); ?>
-                    </p>
+                        <?php _e('Maximum number of times this discount can be applied. Enter 0 for unlimited uses. Applies across all customers.', 'conditional-discounts'); ?>
+                    </p>  
                 </td>
             </tr>                        
 
@@ -268,6 +300,9 @@
                 </th>
                 <td>
                     <input type="datetime-local" name="discount[start_date]" value="<?php echo esc_attr($start_date); ?>">
+                    <p class="description">
+                            <?php _e('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: [Site Timezone]', 'conditional-discounts'); ?>
+                    </p>                      
                 </td>
             </tr>
             
@@ -277,6 +312,9 @@
                 </th>
                 <td>
                     <input type="datetime-local" name="discount[end_date]" id="discount_end_date" value="<?php echo esc_attr($end_date); ?>">
+                    <p class="description">
+                            <?php _e('Optional date when this discount will expire. Leave blank for no expiration. Timezone: [Site Timezone]', 'conditional-discounts'); ?>
+                    </p>  
                 </td>
             </tr>               
 

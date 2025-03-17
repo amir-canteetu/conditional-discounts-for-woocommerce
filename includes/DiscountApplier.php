@@ -136,26 +136,83 @@ class DiscountApplier {
     }
 
     private function apply_rule_discount($rule, $cart) {
-        
-        $discount_amount = 0;
+        $total_discount = 0;
+        $eligible_products = $this->get_eligible_product_ids($rule);
 
-        if ($rule['value_type'] === 'percentage') {
-            $percentage         = floatval($rule['value']);
-            $discount_amount    = ($cart->get_subtotal() * $percentage) / 100;
-            
-            if ($rule['discount_cap'] > 0) {
-                $discount_amount = min($discount_amount, $rule['discount_cap']);
+        // First calculate total potential discount
+        foreach ($cart->get_cart() as $cart_item) {
+            if ($this->is_product_eligible($cart_item, $eligible_products, $rule['discount_type'])) {
+                $product_price = $cart_item['data']->get_price();
+                $quantity = $cart_item['quantity'];
+
+                if ($rule['value_type'] === 'percentage') {
+                    // Calculate percentage discount without cap first
+                    $item_discount = ($product_price * $rule['value']) / 100;
+                    $total_discount += $item_discount * $quantity;
+                } else {
+                    // Fixed amount per item
+                    $total_discount += $rule['value'] * $quantity;
+                }
             }
-        } else {
-            $discount_amount = floatval($rule['value']);
         }
 
-        if ($discount_amount > 0) {
-            $cart->add_fee(  esc_html($rule['label']), -$discount_amount, false );
-
-//            $usage = get_post_meta($rule['post']->ID, '_usage_count', true);
-//            update_post_meta($rule['post']->ID, 'cdwc_rules_usage_count', $usage + 1);
+        // Apply discount cap to total percentage discount
+        if ($rule['value_type'] === 'percentage' && $rule['discount_cap'] > 0) {
+            $total_discount = min($total_discount, $rule['discount_cap']);
         }
+
+        if ($total_discount > 0) {
+            $cart->add_fee( esc_html($rule['label']),  -$total_discount,  false  );
+           // $this->update_usage_count($rule['post']->ID);
+        }
+    }
+
+    private function get_eligible_product_ids($rule) {
+        switch ($rule['discount_type']) {
+            case 'product':
+                return $rule['products'];
+            case 'category':
+                return $this->get_products_in_terms($rule['categories'], 'product_cat');
+            case 'tag':
+                return $this->get_products_in_terms($rule['tags'], 'product_tag');
+            case 'brand':
+                return $this->get_products_in_terms($rule['brands'], 'product_brand');
+            default:
+                return [];
+        }
+    }
+
+    private function get_products_in_terms($term_ids, $taxonomy) {
+        if (empty($term_ids)) return [];
+
+        return get_posts([
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'tax_query' => [
+                [
+                    'taxonomy' => $taxonomy,
+                    'field' => 'term_id',
+                    'terms' => $term_ids,
+                ]
+            ]
+        ]);
+    }
+
+    private function is_product_eligible($cart_item, $eligible_products, $discount_type) {
+        $product_id = $cart_item['product_id'];
+
+        // Check variations differently
+        if ($cart_item['variation_id']) {
+            $product_id = $cart_item['variation_id'];
+        }
+
+        return in_array($product_id, $eligible_products);
+    }
+
+    private function update_usage_count($post_id) {
+        $usage = get_post_meta($post_id, '_usage_count', true);
+        update_post_meta($post_id, '_usage_count', $usage + 1);
     }
 }
 
