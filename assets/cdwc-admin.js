@@ -88,21 +88,14 @@ jQuery(function($) {
         return container;
     }
 
-    // Handle value type display
-    $('#value_type').on('change', function() {
-        const symbol = $(this).val() === 'percentage' ? '%' : cdwcAdmin.currency_symbol;
-        $('#discount_value').next('.description').text(symbol);
-    }).trigger('change');
 
-    
-        
+    /*Show relevant field based on selected type*/ 
     const $discountType     = $('#discount_type');
     const $productField     = $('#product-field');
     const $categoryField    = $('#category-field');
     const $tagField         = $('#tag-field');
     const $brandField       = $('#brand-field');
 
-    // Function to toggle visibility
     function toggleDiscountFields() {
         const discountType = $discountType.val();
         
@@ -112,7 +105,6 @@ jQuery(function($) {
         $tagField.hide();
         $brandField.hide();
 
-        // Show relevant field based on selected type
         switch(discountType) {
             case 'product':
                 $productField.show();
@@ -141,10 +133,32 @@ jQuery(function($) {
     function updateValueTypeDisplay() {
         const valueType = $('#value_type').val();
         const symbol = valueType === 'percentage' ? '%' : cdwcAdmin.currency_symbol;
-        $('.symbol').text(symbol);
+        $('#value-input-wrapper .symbol').text(symbol);
     }
 
     updateValueTypeDisplay();    
     $('#value_type').on('change', updateValueTypeDisplay);
+    
+    
+    /*toggleDiscountCap*/    
+    const $valueType = $('#value_type');
+    const $discountCapRow = $('#discount_cap_row');
+    
+    // Function to toggle visibility
+    function toggleDiscountCap() {
+        const isPercentage = ($valueType.val() === 'percentage');
+        
+        if (isPercentage) {
+            $discountCapRow.slideDown(200);
+        } else {
+            $discountCapRow.slideUp(200);
+        }
+    }
+    
+    // Initial state check
+    toggleDiscountCap();
+    
+    // Update on value type change
+    $valueType.on('change', toggleDiscountCap);    
     
 });

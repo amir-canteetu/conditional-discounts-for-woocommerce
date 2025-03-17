@@ -106,7 +106,7 @@
 
 
 
-.value-input-wrapper {
+.input-wrapper {
     position: relative;
     display: inline-block;
     width: 100%;
@@ -122,8 +122,10 @@
     color: #666;
 }
 
-#discount_value {
+#discount_value, #discount_cap {
     padding-left: 25px !important; 
     width:100%;
 }
+
+
 

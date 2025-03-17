@@ -4,6 +4,7 @@
 namespace Supreme\ConditionalDiscounts;
 
 use Supreme\ConditionalDiscounts\Admin\AdminInterface;
+use Supreme\ConditionalDiscounts\DiscountApplier;
 
 if (!defined('ABSPATH')) { exit; }
 
@@ -25,9 +26,7 @@ class Plugin {
     private function register_services() {
         
         (new AdminInterface());
-        
-//    new Supreme\ConditionalDiscountsD\ConditionChecker();
-//    new Supreme\ConditionalDiscounts\DiscountApplier();        
+        (new DiscountApplier());      
 
     }
 

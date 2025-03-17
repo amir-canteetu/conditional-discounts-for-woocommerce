@@ -61,16 +61,16 @@
                 <td>
                     <input type="text" name="discount[label]" value="<?php echo esc_attr($label); ?>" class="regular-text">
                     <p class="description">
-                        <?php _e('This will be shown on the cart', 'conditional-discounts'); ?>
+                        <?php _e('This will be displayed in the cart.', 'conditional-discounts'); ?>
                     </p>
                 </td>
             </tr>
 
-            <!-- Value Type -->
+            <!-- Discount Value Type -->
             <tr>
                 <th scope="row">
                     <label for="value_type">
-                        <?php _e('Value Type', 'conditional-discounts'); ?>
+                        <?php _e('Discount Value Type', 'conditional-discounts'); ?>
                     </label>
                 </th>
                 <td>
@@ -93,7 +93,7 @@
                     </label>
                 </th>
                 <td>
-                    <div class="value-input-wrapper">
+                    <div class="input-wrapper" id="value-input-wrapper">
                         <span class="symbol">
                             <?php echo ($value_type === 'percentage') ? '%' : get_woocommerce_currency_symbol(); ?>
                         </span>
@@ -107,15 +107,20 @@
             </tr>
             
             <!-- Discount Cap -->
-            <tr>
+            <tr id="discount_cap_row">
                 <th scope="row">
                     <label for="discount_cap"><?php _e('Discount Cap', 'conditional-discounts'); ?></label>
                 </th>
                 <td>
-                    <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0">
-                    <p class="description">
-                        <?php _e('0 for unlimited cap', 'conditional-discounts'); ?>
-                    </p>
+                    <div class="input-wrapper">
+                        <span class="symbol">
+                            <?php echo get_woocommerce_currency_symbol(); ?>
+                        </span>                    
+                        <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0">
+                    </div>
+                        <p class="description">
+                            <?php _e('0 for unlimited cap', 'conditional-discounts'); ?>
+                        </p>
                 </td>
             </tr>            
 
