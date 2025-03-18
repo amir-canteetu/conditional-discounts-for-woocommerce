@@ -84,7 +84,8 @@ class AdminInterface {
                 'tags' => [],
                 'roles' => [],
                 'start_date' => '',
-                'end_date' => ''
+                'end_date' => '',
+                'max_use_per_user' => 1
             ];
             
             $discount                       = wp_parse_args($discountData, $defaults);
@@ -291,6 +292,7 @@ class AdminInterface {
             $sanitized_data['value']                = max(0, floatval($input['value'] ?? 0));
             $sanitized_data['discount_cap']         = max(0, floatval($input['discount_cap'] ?? 0));
             $sanitized_data['max_use']              = max(0, intval($input['max_use'] ?? 1));
+            $sanitized_data['max_use_per_user']     = max(0, intval($input['max_use_per_user'] ?? 0));
 
             // Select fields
             $sanitized_data['discount_type']    = in_array($input['discount_type'] ?? '', ['product', 'category', 'tag', 'brand'])  ? $input['discount_type']  : 'product';

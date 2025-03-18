@@ -11,11 +11,6 @@ class DiscountApplier {
 
                     //add_action('woocommerce_order_refunded', [$this, 'decrement_usage_counts']);
         }
-        
-        public function init_hooks() {
-                  
-                    
-        }        
 
         public function apply_discounts(\WC_Cart $cart) {
                 $rules = $this->get_active_rules();
@@ -59,20 +54,20 @@ class DiscountApplier {
         }
 
         private function is_rule_valid($rule) {
+             
+            $now    = current_time('timestamp');
+            $start  = strtotime($rule['start_date']);
+            $end    = strtotime($rule['end_date']);
 
-                $now    = current_time('timestamp');
-                $start  = strtotime($rule['start_date']);
-                $end    = strtotime($rule['end_date']);
+            if ($start && $now < $start) {return false;}
+            if ($end && $now > $end) {return false;}
 
-                if ($start && $now < $start) {return false;}
-                if ($end && $now > $end) {return false;}
+            $global_usage = get_post_meta($rule['post_id'], 'cdwc_usage_count', true);
+            if ($rule['max_use'] > 0 && $global_usage >= $rule['max_use']) {
+                return false;
+            }
 
-                $usage  = get_post_meta( $rule['post_id'], 'cdwc_usage_count', true);
-                if ($rule['max_use'] > 0 && $usage >= $rule['max_use']) {
-                    return false;
-                }        
-
-                return true;
+            return true;
         }
 
         private function rule_matches($rule, $cart) {
@@ -97,6 +92,23 @@ class DiscountApplier {
                 if (!$this->cart_contains_required_items($rule, $cart)) {
                     return false;
                 }
+                
+                if ($rule['max_use_per_user'] > 0) {
+                    $user_id    = get_current_user_id();
+                    $email      = $cart->get_customer() ? $cart->get_customer()->get_billing_email() : null;
+
+                    // Track guests by email, logged-in users by ID
+                    $identifier = $user_id ? "user_{$user_id}" : "email_" . md5($email);
+                    $usage_key  = "cdwc_user_usage_{$identifier}";
+
+                    // Get current usage count
+                    $usage = get_post_meta($rule['post_id'], $usage_key, true) ?: 0;
+
+                    if ($usage >= $rule['max_use_per_user']) {
+                        return false;
+                    }
+                }            
+                
                 return true;
         }
 
@@ -226,22 +238,28 @@ class DiscountApplier {
 
         public function update_usage_counts($order_id) {
             $order = wc_get_order($order_id);
+            $user_id = $order->get_customer_id();
+            $email = $order->get_billing_email();
 
             foreach ($order->get_fees() as $fee) {
                 $fee_name = $fee->get_name();
 
                 if (preg_match('/CDWCID:(\d+)/', $fee_name, $matches)) {
                     $discount_id = (int) $matches[1];
+                    $rule = get_post_meta($discount_id, 'cdwc_rules', true);
 
-                    // Validate discount exists
-                    if (get_post_status($discount_id) === 'publish') {
-                        $usage = get_post_meta($discount_id, 'cdwc_usage_count', true);
-                        update_post_meta(
-                            $discount_id, 
-                            'cdwc_usage_count', 
-                            ($usage ?: 0) + 1
-                        );
+                    if ($rule['max_use_per_user'] > 0) {
+                        $identifier = $user_id ? "user_{$user_id}" : "email_" . md5($email);
+                        $usage_key = "cdwc_user_usage_{$identifier}";
+
+                        // Increment user-specific count
+                        $current_count = get_post_meta($discount_id, $usage_key, true) ?: 0;
+                        update_post_meta($discount_id, $usage_key, $current_count + 1);
                     }
+
+                    // Update global count
+                    $global_usage = get_post_meta($discount_id, 'cdwc_usage_count', true) ?: 0;
+                    update_post_meta($discount_id, 'cdwc_usage_count', $global_usage + 1);
                 }
             }
         }

@@ -289,7 +289,21 @@
                         <?php _e('Maximum number of times this discount can be applied. Enter 0 for unlimited uses. Applies across all customers.', 'conditional-discounts'); ?>
                     </p>  
                 </td>
-            </tr>                        
+            </tr>     
+            
+            
+            <!-- Maximum Uses Per User-->
+            <tr>
+                <th scope="row">
+		    <label for="max_use_per_user"><?php _e('Max Uses Per User', 'conditional-discounts'); ?></label>
+                </th>
+                <td>
+                <input type="number" name="discount[max_use_per_user]" id="max_use_per_user" value="<?php echo esc_attr($max_use_per_user); ?>" min="0">
+                        <p class="description">
+                            <?php _e('Maximum times a single user can use this discount (0 = unlimited)', 'conditional-discounts'); ?>
+                        </p>
+                </td>
+            </tr>             
 
             <!-- Dates -->
             <tr>
