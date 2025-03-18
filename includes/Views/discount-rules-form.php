@@ -301,7 +301,12 @@
                 <td>
                     <input type="datetime-local" name="discount[start_date]" value="<?php echo esc_attr($start_date); ?>">
                     <p class="description">
-                            <?php _e('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: [Site Timezone]', 'conditional-discounts'); ?>
+                            <?php
+                                printf(
+                                    __('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts'),
+                                    $timezone
+                                );
+                            ?>
                     </p>                      
                 </td>
             </tr>
@@ -313,7 +318,12 @@
                 <td>
                     <input type="datetime-local" name="discount[end_date]" id="discount_end_date" value="<?php echo esc_attr($end_date); ?>">
                     <p class="description">
-                            <?php _e('Optional date when this discount will expire. Leave blank for no expiration. Timezone: [Site Timezone]', 'conditional-discounts'); ?>
+                        <?php
+                            printf(
+                                    __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts'),
+                                    $timezone
+                            );
+                        ?>
                     </p>  
                 </td>
             </tr>               

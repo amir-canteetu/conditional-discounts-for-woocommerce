@@ -111,6 +111,7 @@ class AdminInterface {
 
             $discount['selected_products']  = $selected_products;
             $discount['currency_symbol']    = get_woocommerce_currency_symbol();
+            $discount['timezone']           = wp_timezone_string();
             
             $this->enqueue_assets();
             
@@ -274,7 +275,8 @@ class AdminInterface {
             'tags' => [],
             'roles' => [],
             'start_date' => '',
-            'end_date' => ''
+            'end_date' => '', 
+            'post_id' => $post_id
         ];
 
         // Sanitize each field
@@ -307,7 +309,6 @@ class AdminInterface {
         }
 
         update_post_meta($post_id, 'cdwc_rules', $sanitized_data);
-
         do_action('cdwc_discount_saved', $post_id, $sanitized_data);
 }
 

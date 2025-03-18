@@ -26,7 +26,7 @@ add_action( 'before_woocommerce_init', function() {
     }
 } );
 
-add_action('plugins_loaded', function() {
+add_action('woocommerce_loaded', function() {
 
      (new Supreme\ConditionalDiscounts\Plugin())->initialize();
     

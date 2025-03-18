@@ -31,14 +31,8 @@ class Plugin {
     }
 
     private function register_hooks() {
-//        add_action('woocommerce_cart_calculate_fees', [$this->container->get(RuleEngine::class), 'apply_discounts']);
-//        add_action('admin_menu', [$this->container->get(RuleEditor::class), 'init']);
         
-//      add_action('woocommerce_cart_calculate_fees', [$applier, 'apply_discounts']);        
+      
     }
-
-    
-    
-    
     
 }
