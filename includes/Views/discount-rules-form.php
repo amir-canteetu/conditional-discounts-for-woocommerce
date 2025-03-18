@@ -140,7 +140,7 @@
                         <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0" step="any">
                     </div>
                         <p class="description">
-                            <?php _e("Maximum discount amount allowed when using percentage-based discounts. Enter 0 to allow unlimited discounts.", 'conditional-discounts'); ?>
+                            <?php _e("Maximum discount amount allowed per cart when using percentage-based discounts. Enter 0 to allow unlimited discounts.", 'conditional-discounts'); ?>
                         </p>
                 </td>
             </tr>            
@@ -161,6 +161,9 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="description">
+                       <?php _e('Select specific products to apply the discount. Leave empty to apply to <strong>all</strong> products.', 'conditional-discounts'); ?>
+                   </p>                   
                 </td>
             </tr>
             
@@ -183,6 +186,9 @@
                             <?php endif;
                         endforeach; ?>
                     </select>
+                    <p class="description">
+                        <?php _e('Select specific brands to apply the discount. Leave empty to apply to <strong>all</strong> brands.', 'conditional-discounts'); ?>
+                    </p>                    
                 </td>
             </tr>            
             
@@ -205,6 +211,9 @@
                             <?php endif;
                         endforeach; ?>
                     </select>
+                    <p class="description">
+                        <?php _e('Select specific categories to apply the discount. Leave empty to apply to <strong>all</strong> categories.', 'conditional-discounts'); ?>
+                    </p>                    
                 </td>
             </tr>   
             
@@ -227,6 +236,10 @@
                            <?php endif;
                        endforeach; ?>
                    </select>
+                    <p class="description">
+                        <?php _e('Select specific tags to apply the discount. Leave empty to apply to <strong>all</strong> tags.', 'conditional-discounts'); ?>
+                    </p>                    
+                    
                 </td>
             </tr>              
             

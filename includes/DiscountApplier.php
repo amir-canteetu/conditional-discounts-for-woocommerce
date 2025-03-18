@@ -72,10 +72,9 @@ class DiscountApplier {
 
         private function rule_matches($rule, $cart) {
 
-    //         if (!empty($rule['roles']) && !$this->user_has_role($rule['roles'])) {
-    //            \write_log('L74');
-    //            return false;
-    //         }
+                if (!empty($rule['roles']) && !$this->user_has_role($rule['roles'])) {
+                   return false;
+                }
 
                 $cart_total = $cart->get_subtotal();
                 if ($cart_total < $rule['min_cart_total']) {
@@ -87,7 +86,7 @@ class DiscountApplier {
                 if ($cart_quantity < $rule['min_cart_quantity']) {
                     return false;
                 }
-
+                
                 // Check product/category/tag requirements
                 if (!$this->cart_contains_required_items($rule, $cart)) {
                     return false;
@@ -119,39 +118,53 @@ class DiscountApplier {
         }
 
         private function cart_contains_required_items($rule, $cart) {
+            $cart_items = $cart->get_cart();
+            $found = false;
 
-                $cart_items = $cart->get_cart();
-                $found      = false;
+            foreach ($cart_items as $item) {
+                $product = $item['data'];
 
-                foreach ($cart_items as $item) {
-                    $product = $item['data'];
+                switch ($rule['discount_type']) {
+                    case 'product':
+                        if (empty($rule['products'])) {
+                            $found = true;
+                        } else {
+                            $found = in_array($product->get_id(), $rule['products']);
+                        }
+                        break;
 
-                    switch ($rule['discount_type']) {
-                        case 'product':
-                            if (in_array($product->get_id(), $rule['products'])) {
-                                $found = true;
-                            }
-                            break;
+                    case 'category':
+                        $categories = wc_get_product_terms($product->get_id(), 'product_cat', ['fields' => 'ids']);
+                        if (empty($rule['categories'])) {
+                            $found = true;
+                        } else {
+                            $found = !empty(array_intersect($categories, $rule['categories']));
+                        }
+                        break;
 
-                        case 'category':
-                            $categories = wc_get_product_terms($product->get_id(), 'product_cat', ['fields' => 'ids']);
-                            if (!empty(array_intersect($categories, $rule['categories']))) {
-                                $found = true;
-                            }
-                            break;
+                    case 'tag':
+                        $tags = wc_get_product_terms($product->get_id(), 'product_tag', ['fields' => 'ids']);
+                        if (empty($rule['tags'])) {
+                            $found = true;
+                        } else {
+                            $found = !empty(array_intersect($tags, $rule['tags']));
+                        }
+                        break;
 
-                        case 'tag':
-                            $tags = wc_get_product_terms($product->get_id(), 'product_tag', ['fields' => 'ids']);
-                            if (!empty(array_intersect($tags, $rule['tags']))) {
-                                $found = true;
-                            }
-                            break;
-                    }
-
-                    if ($found) {break;}
+                    case 'brand':
+                        $brands = wc_get_product_terms($product->get_id(), 'product_brand', ['fields' => 'ids']);
+                        if (empty($rule['brands'])) {
+                            $found = true;
+                        } else {
+                            $found = !empty(array_intersect($brands, $rule['brands']));
+                        }
+                        break;
                 }
 
-                return $found;
+                if ($found) break;
+            }
+
+            return $found;
         }
 
         private function apply_rule_discount($rule, $cart) {
@@ -228,9 +241,21 @@ class DiscountApplier {
         private function is_product_eligible($cart_item, $eligible_products, $discount_type) {
             $product_id = $cart_item['product_id'];
 
-            // Check variations differently
             if ($cart_item['variation_id']) {
                 $product_id = $cart_item['variation_id'];
+            }
+
+            // Handle empty criteria for ALL discount types
+            if (empty($eligible_products)) {
+                switch ($discount_type) {
+                    case 'product':
+                    case 'category':
+                    case 'tag':
+                    case 'brand':
+                        return true;
+                    default:
+                        return false; 
+                }
             }
 
             return in_array($product_id, $eligible_products);
