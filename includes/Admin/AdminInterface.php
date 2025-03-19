@@ -58,7 +58,7 @@ class AdminInterface {
     public function add_meta_box() {
         add_meta_box(
             'discount-rules',
-            __('Discount Rules', 'conditional-discounts'),
+            __('Discount Rules', 'conditional-discounts-for-woocommerce'),
             [$this, 'render_meta_box'],
             'shop_discount'
         );
@@ -93,10 +93,10 @@ class AdminInterface {
             $discount['currency_symbol']    = get_woocommerce_currency_symbol(); 
             $discount['nonce_field']        = wp_nonce_field( 'save_discount_rules', 'discount_rules_nonce', true,  false );  
             $discount['labels'] = [
-                'search_products' => __('Search products...', 'conditional-discounts'),
-                'search_cats' => __('Search categories...', 'conditional-discounts'),
-                'search_tags' => __('Search tags...', 'conditional-discounts'),
-                'search_brands' => __('Search brands...', 'conditional-discounts'),
+                'search_products' => __('Search products...', 'conditional-discounts-for-woocommerce'),
+                'search_cats' => __('Search categories...', 'conditional-discounts-for-woocommerce'),
+                'search_tags' => __('Search tags...', 'conditional-discounts-for-woocommerce'),
+                'search_brands' => __('Search brands...', 'conditional-discounts-for-woocommerce'),
             ];   
             
             $selected_products = [];
@@ -124,7 +124,7 @@ class AdminInterface {
 
         wp_enqueue_script(
             'cdwc-select2',
-            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js',
+            CDWC_PLUGIN_URL . '/assets/select2.full.min.js',
             ['jquery'],
             '4.0.13',
             true
@@ -132,7 +132,7 @@ class AdminInterface {
 
         wp_enqueue_style(
             'cdwc-select2',
-            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css',
+            CDWC_PLUGIN_URL . '/assets/select2.min.css',
             [],
             '4.0.13'
         );
@@ -156,9 +156,9 @@ class AdminInterface {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce('cdwc-search-nonce'),
             'labels'  => [
-                'search_products' => __('Search products...', 'conditional-discounts'),
-                'search_cats'     => __('Search categories...', 'conditional-discounts'),
-                'search_tags'     => __('Search tags...', 'conditional-discounts'),
+                'search_products' => __('Search products...', 'conditional-discounts-for-woocommerce'),
+                'search_cats'     => __('Search categories...', 'conditional-discounts-for-woocommerce'),
+                'search_tags'     => __('Search tags...', 'conditional-discounts-for-woocommerce'),
             ],
             'currency_symbol' => get_woocommerce_currency_symbol()
         ]);

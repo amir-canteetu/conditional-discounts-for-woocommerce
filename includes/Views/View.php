@@ -23,7 +23,7 @@ class View {
         }
 
         if (!file_exists($resolved_path)) {
-            echo '<p>' . esc_html__('Template file not found.', 'conditional-discounts') . '</p>';
+            echo '<p>' . esc_html__('Template file not found.', 'conditional-discounts-for-woocommerce') . '</p>';
             return;
         }
 

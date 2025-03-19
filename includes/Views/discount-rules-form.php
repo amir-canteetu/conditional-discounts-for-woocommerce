@@ -18,7 +18,7 @@
             <tr>
                 <th scope="row">
                     <label for="discount_enabled">
-                        <?php _e('Enable Discount', 'conditional-discounts'); ?>
+                        <?php _e('Enable Discount', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
@@ -30,22 +30,22 @@
             <tr>
                 <th scope="row">
                     <label for="discount_type">
-                        <?php _e('Discount Type', 'conditional-discounts'); ?>
+                        <?php _e('Discount Type', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
                     <select name="discount[discount_type]" id="discount_type">
                         <option value="product" <?php selected($discount_type, 'product'); ?>>
-                            <?php _e('Product Discount', 'conditional-discounts'); ?>
+                            <?php _e('Product Discount', 'conditional-discounts-for-woocommerce'); ?>
                         </option>
                         <option value="category" <?php selected($discount_type, 'category'); ?>>
-                            <?php _e('Category Discount', 'conditional-discounts'); ?>
+                            <?php _e('Category Discount', 'conditional-discounts-for-woocommerce'); ?>
                         </option>
                         <option value="brand" <?php selected($discount_type, 'brand'); ?>>
-                            <?php _e('Brand Discount', 'conditional-discounts'); ?>
+                            <?php _e('Brand Discount', 'conditional-discounts-for-woocommerce'); ?>
                         </option>                        
                         <option value="tag" <?php selected($discount_type, 'tag'); ?>>
-                            <?php _e('Tag Discount', 'conditional-discounts'); ?>
+                            <?php _e('Tag Discount', 'conditional-discounts-for-woocommerce'); ?>
                         </option>                        
                     </select>   
                 </td>
@@ -55,13 +55,13 @@
             <tr>
                 <th scope="row">
                     <label for="discount_label">
-                        <?php _e('Discount Label', 'conditional-discounts'); ?>
+                        <?php _e('Discount Label', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
                     <input type="text" name="discount[label]" value="<?php echo esc_attr($label); ?>" class="regular-text">
                     <p class="description">
-                        <?php _e("Customer-facing name for this discount that will appear in the cart and checkout. Make it clear and recognizable (e.g., 'Summer Sale Discount').", 'conditional-discounts'); ?>
+                        <?php _e("Customer-facing name for this discount that will appear in the cart and checkout. Make it clear and recognizable (e.g., 'Summer Sale Discount').", 'conditional-discounts-for-woocommerce'); ?>
                     </p>
                 </td>
             </tr>
@@ -70,16 +70,16 @@
             <tr>
                 <th scope="row">
                     <label for="value_type">
-                        <?php _e('Discount Value Type', 'conditional-discounts'); ?>
+                        <?php _e('Discount Value Type', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
                     <select name="discount[value_type]" id="value_type">
                         <option value="percentage" <?php selected($value_type, 'percentage'); ?>>
-                            <?php _e('Percentage', 'conditional-discounts'); ?>
+                            <?php _e('Percentage', 'conditional-discounts-for-woocommerce'); ?>
                         </option>
                         <option value="fixed" <?php selected($value_type, 'fixed'); ?>>
-                            <?php _e('Fixed Amount', 'conditional-discounts'); ?>
+                            <?php _e('Fixed Amount', 'conditional-discounts-for-woocommerce'); ?>
                         </option>
                     </select>
                         <p class="description">
@@ -89,7 +89,7 @@
                                     • Percentage: Discount applied to each eligible product's price (Example: 10%% off every qualifying product)\n
                                     Discount Cap (below) limits the total discount amount\n
                                     • Fixed Amount: Flat rate discount per eligible item (Example: %s5 off every qualifying product)", 
-                                    'conditional-discounts'
+                                    'conditional-discounts-for-woocommerce'
                                 ),
                                 $currency_symbol
                             );
@@ -110,7 +110,7 @@
             <tr>
                 <th scope="row">
                     <label for="discount_value">
-                        <?php _e('Discount Value', 'conditional-discounts'); ?>
+                        <?php _e('Discount Value', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
@@ -130,7 +130,7 @@
             <!-- Discount Cap -->
             <tr id="discount_cap_row">
                 <th scope="row">
-                    <label for="discount_cap"><?php _e('Discount Cap', 'conditional-discounts'); ?></label>
+                    <label for="discount_cap"><?php _e('Discount Cap', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <div class="input-wrapper">
@@ -140,7 +140,7 @@
                         <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0" step="any">
                     </div>
                         <p class="description">
-                            <?php _e("Maximum discount amount allowed per cart when using percentage-based discounts. Enter 0 to allow unlimited discounts.", 'conditional-discounts'); ?>
+                            <?php _e("Maximum discount amount allowed per cart when using percentage-based discounts. Enter 0 to allow unlimited discounts.", 'conditional-discounts-for-woocommerce'); ?>
                         </p>
                 </td>
             </tr>            
@@ -148,7 +148,7 @@
             <!-- Apply to Products/Categories/Brands/Tags -->
             <tr class="product-field" id="product-field">
                 <th scope="row">
-                    <?php _e('Apply to Products', 'conditional-discounts'); ?>
+                    <?php _e('Apply to Products', 'conditional-discounts-for-woocommerce'); ?>
                 </th>
                 <td>
                     <select name="discount[products][]" 
@@ -162,14 +162,14 @@
                         <?php endforeach; ?>
                     </select>
                     <p class="description">
-                       <?php _e('Select specific products to apply the discount. Leave empty to apply to <strong>all</strong> products.', 'conditional-discounts'); ?>
+                       <?php _e('Select specific products to apply the discount. Leave empty to apply to <strong>all</strong> products.', 'conditional-discounts-for-woocommerce'); ?>
                    </p>                   
                 </td>
             </tr>
             
             <tr class="brand-field" id="brand-field">
                 <th scope="row">
-                    <label><?php _e('Apply to Brands', 'conditional-discounts'); ?></label>
+                    <label><?php _e('Apply to Brands', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <select name="discount[brands][]" 
@@ -187,14 +187,14 @@
                         endforeach; ?>
                     </select>
                     <p class="description">
-                        <?php _e('Select specific brands to apply the discount. Leave empty to apply to <strong>all</strong> brands.', 'conditional-discounts'); ?>
+                        <?php _e('Select specific brands to apply the discount. Leave empty to apply to <strong>all</strong> brands.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>                    
                 </td>
             </tr>            
             
             <tr class="category-field" id="category-field">
                 <th scope="row">
-                    <label><?php _e('Apply to Categories', 'conditional-discounts'); ?></label>
+                    <label><?php _e('Apply to Categories', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <select name="discount[categories][]" 
@@ -212,14 +212,14 @@
                         endforeach; ?>
                     </select>
                     <p class="description">
-                        <?php _e('Select specific categories to apply the discount. Leave empty to apply to <strong>all</strong> categories.', 'conditional-discounts'); ?>
+                        <?php _e('Select specific categories to apply the discount. Leave empty to apply to <strong>all</strong> categories.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>                    
                 </td>
             </tr>   
             
             <tr class="tag-field" id="tag-field">
                 <th scope="row">
-                    <label><?php _e('Apply to Tags', 'conditional-discounts'); ?></label>
+                    <label><?php _e('Apply to Tags', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                    <select name="discount[tags][]" 
@@ -237,7 +237,7 @@
                        endforeach; ?>
                    </select>
                     <p class="description">
-                        <?php _e('Select specific tags to apply the discount. Leave empty to apply to <strong>all</strong> tags.', 'conditional-discounts'); ?>
+                        <?php _e('Select specific tags to apply the discount. Leave empty to apply to <strong>all</strong> tags.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>                    
                     
                 </td>
@@ -246,7 +246,7 @@
             <!-- User Roles -->
             <tr>
                 <th scope="row">
-                    <label><?php _e('Allowed User Roles', 'conditional-discounts'); ?></label>
+                    <label><?php _e('Allowed User Roles', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <div class="role-checkboxes">
@@ -258,24 +258,24 @@
                         <?php endforeach; ?>
                     </div>
                         <div class="description" id="roles-description">
-                            <p><?php esc_html_e('Restrict this discount to specific user roles. Rules:', 'conditional-discounts'); ?></p>
+                            <p><?php esc_html_e('Restrict this discount to specific user roles. Rules:', 'conditional-discounts-for-woocommerce'); ?></p>
                             <ul>
                                 <li>
                                     <?php
                                     printf(
                                         /* translators: %s: <strong> tag wrapped around "at least one" */
-                                        esc_html__('Logged-in users must have %s selected role', 'conditional-discounts'),
-                                        '<strong>' . esc_html__('at least one', 'conditional-discounts') . '</strong>'
+                                        esc_html__('Logged-in users must have %s selected role', 'conditional-discounts-for-woocommerce'),
+                                        '<strong>' . esc_html__('at least one', 'conditional-discounts-for-woocommerce') . '</strong>'
                                     );
                                     ?>
                                 </li>
-                                <li><?php esc_html_e('Guests are excluded if any roles are selected', 'conditional-discounts'); ?></li>
+                                <li><?php esc_html_e('Guests are excluded if any roles are selected', 'conditional-discounts-for-woocommerce'); ?></li>
                                 <li>
                                     <?php
                                     printf(
                                         /* translators: %s: <strong> tag wrapped around "all users" */
-                                        esc_html__('Leave all unselected to apply to %s (including guests)', 'conditional-discounts'),
-                                        '<strong>' . esc_html__('all users', 'conditional-discounts') . '</strong>'
+                                        esc_html__('Leave all unselected to apply to %s (including guests)', 'conditional-discounts-for-woocommerce'),
+                                        '<strong>' . esc_html__('all users', 'conditional-discounts-for-woocommerce') . '</strong>'
                                     );
                                     ?>
                                 </li>
@@ -283,7 +283,7 @@
                                     <?php
                                     printf(
                                         /* translators: %s: <em> tag wrapped around "OR" */
-                                        esc_html__('Uses %s logic: users need only one matching role', 'conditional-discounts'),
+                                        esc_html__('Uses %s logic: users need only one matching role', 'conditional-discounts-for-woocommerce'),
                                         '<em>"OR"</em>'
                                     );
                                     ?>
@@ -296,7 +296,7 @@
             <!-- Minimum Cart Total -->
             <tr>
                 <th scope="row">
-		   <label for="discount_min_cart_total"><?php _e('Minimum Cart Total', 'conditional-discounts'); ?></label>
+		   <label for="discount_min_cart_total"><?php _e('Minimum Cart Total', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <div class="input-wrapper">
@@ -306,7 +306,7 @@
                         <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[min_cart_total]" id="discount_min_cart_total" value="<?php echo esc_attr($min_cart_total); ?>" min="0" step="any">
                     </div>
                     <p class="description">
-                        <?php _e('The minimum cart subtotal (before discounts and taxes) required to activate this discount. Set to 0 to apply regardless of cart total.', 'conditional-discounts'); ?>
+                        <?php _e('The minimum cart subtotal (before discounts and taxes) required to activate this discount. Set to 0 to apply regardless of cart total.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>                    
                 </td>             
             </tr>   
@@ -314,12 +314,12 @@
             <!-- Minimum Cart Quantity -->
             <tr>
                 <th scope="row">
-		   <label for="discount_min_cart_quantity"><?php _e('Minimum Cart Quantity', 'conditional-discounts'); ?></label>
+		   <label for="discount_min_cart_quantity"><?php _e('Minimum Cart Quantity', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
 		 <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[min_cart_quantity]" id="discount_min_cart_quantity" value="<?php echo esc_attr($min_cart_quantity); ?>" min="0" step="1">
                     <p class="description">
-                        <?php _e('The minimum number of items needed in the cart to qualify for this discount. Set to 0 to apply to carts of any size.', 'conditional-discounts'); ?>
+                        <?php _e('The minimum number of items needed in the cart to qualify for this discount. Set to 0 to apply to carts of any size.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>                   
                 </td>
             </tr>        
@@ -327,12 +327,12 @@
             <!-- Maximum Uses -->
             <tr>
                 <th scope="row">
-		   <label for="max_use"><?php _e('Maximum Uses', 'conditional-discounts'); ?></label>
+		   <label for="max_use"><?php _e('Maximum Uses', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[max_use]" id="max_use" value="<?php echo esc_attr($max_use); ?>" min="0">
                     <p class="description">
-                        <?php _e('Maximum number of times this discount can be applied. Enter 0 for unlimited uses. Applies across all customers.', 'conditional-discounts'); ?>
+                        <?php _e('Maximum number of times this discount can be applied. Enter 0 for unlimited uses. Applies across all customers.', 'conditional-discounts-for-woocommerce'); ?>
                     </p>  
                 </td>
             </tr>     
@@ -341,12 +341,12 @@
             <!-- Maximum Uses Per User-->
             <tr>
                 <th scope="row">
-		    <label for="max_use_per_user"><?php _e('Max Uses Per User', 'conditional-discounts'); ?></label>
+		    <label for="max_use_per_user"><?php _e('Max Uses Per User', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                 <input type="number" name="discount[max_use_per_user]" id="max_use_per_user" value="<?php echo esc_attr($max_use_per_user); ?>" min="0">
                         <p class="description">
-                            <?php _e('Maximum times a single user can use this discount (0 = unlimited)', 'conditional-discounts'); ?>
+                            <?php _e('Maximum times a single user can use this discount (0 = unlimited)', 'conditional-discounts-for-woocommerce'); ?>
                         </p>
                 </td>
             </tr>             
@@ -355,7 +355,7 @@
             <tr>
                 <th scope="row">
                     <label for="discount_start_date">
-                        <?php _e('Start Date', 'conditional-discounts'); ?>
+                        <?php _e('Start Date', 'conditional-discounts-for-woocommerce'); ?>
                     </label>
                 </th>
                 <td>
@@ -363,7 +363,7 @@
                     <p class="description">
                             <?php
                                 printf(
-                                    __('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts'),
+                                    __('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts-for-woocommerce'),
                                     $timezone
                                 );
                             ?>
@@ -373,14 +373,14 @@
             
             <tr>
                 <th scope="row">
-		   <label for="discount_end_date"><?php _e('End Date', 'conditional-discounts'); ?></label>
+		   <label for="discount_end_date"><?php _e('End Date', 'conditional-discounts-for-woocommerce'); ?></label>
                 </th>
                 <td>
                     <input type="datetime-local" name="discount[end_date]" id="discount_end_date" value="<?php echo esc_attr($end_date); ?>">
                     <p class="description">
                         <?php
                             printf(
-                                    __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts'),
+                                    __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts-for-woocommerce'),
                                     $timezone
                             );
                         ?>
