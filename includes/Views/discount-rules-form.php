@@ -113,7 +113,7 @@
                             // Replace single newlines with a single <br> tag
                             $description = preg_replace('/\n+/', '<br>', esc_html($description));
 
-                            echo $description;
+                            echo wp_kses_post($description);
                             ?>
                         </p>          
                 </td>
@@ -129,7 +129,7 @@
                 <td>
                     <div class="input-wrapper" id="value-input-wrapper">
                         <span class="symbol">
-                            <?php echo ($value_type === 'percentage') ? '%' : $currency_symbol; ?>
+                            <?php echo ($value_type === 'percentage') ? '%' : esc_html($currency_symbol); ?>
                         </span>
                         <input type="number" name="discount[value]" id="discount_value" 
                                value="<?php echo esc_attr($value); ?>" 
@@ -148,7 +148,7 @@
                 <td>
                     <div class="input-wrapper">
                         <span class="symbol">
-                            <?php echo html_entity_decode($currency_symbol); ?>
+                            <?php echo esc_html(html_entity_decode($currency_symbol)); ?>
                         </span>                    
                         <input type="number" name="discount[discount_cap]" id="discount_cap" value="<?php echo esc_attr($discount_cap); ?>" min="0" step="any">
                     </div>
@@ -266,7 +266,7 @@
                         <?php foreach (get_editable_roles() as $role => $details) : ?>
                             <label>
                                 <input type="checkbox" name="discount[roles][]"  value="<?php echo esc_attr($role); ?>"  <?php checked(in_array($role, $roles)); ?>>
-                                <?php echo translate_user_role($details['name']); ?>
+                                <?php echo esc_html(translate_user_role($details['name'])); ?>
                             </label>
                         <?php endforeach; ?>
                     </div>
@@ -314,7 +314,7 @@
                 <td>
                     <div class="input-wrapper">
                         <span class="symbol">
-                            <?php echo $currency_symbol; ?>
+                            <?php echo esc_html(html_entity_decode($currency_symbol, ENT_QUOTES, 'UTF-8')); ?>
                         </span>                    
                         <input type="number" inputmode="numeric" pattern="[0-9]*" name="discount[min_cart_total]" id="discount_min_cart_total" value="<?php echo esc_attr($min_cart_total); ?>" min="0" step="any">
                     </div>
@@ -376,9 +376,9 @@
                     <p class="description">
                             <?php
                                 printf(
-                                    /* translators: %s: Timezone name (e.g. "America/New York") */
-                                    __('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts-for-woocommerce'),
-                                    $timezone
+                                    /* translators: %s: Timezone name */
+                                    esc_html__('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts-for-woocommerce'),
+                                    esc_html($timezone)
                                 );
                             ?>
                     </p>                      
@@ -394,9 +394,9 @@
                     <p class="description">
                         <?php
                             printf(
-                                /* translators: %s: Timezone name (e.g. "America/New York") */
-                                __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts-for-woocommerce'),
-                                $timezone
+                                /* translators: %s: Timezone name */
+                                esc_html__('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts-for-woocommerce'),
+                                esc_html($timezone)
                             );
                         ?>
                     </p>  
