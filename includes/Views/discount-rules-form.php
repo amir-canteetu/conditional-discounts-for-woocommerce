@@ -257,6 +257,39 @@
                             </label>
                         <?php endforeach; ?>
                     </div>
+                        <div class="description" id="roles-description">
+                            <p><?php esc_html_e('Restrict this discount to specific user roles. Rules:', 'conditional-discounts'); ?></p>
+                            <ul>
+                                <li>
+                                    <?php
+                                    printf(
+                                        /* translators: %s: <strong> tag wrapped around "at least one" */
+                                        esc_html__('Logged-in users must have %s selected role', 'conditional-discounts'),
+                                        '<strong>' . esc_html__('at least one', 'conditional-discounts') . '</strong>'
+                                    );
+                                    ?>
+                                </li>
+                                <li><?php esc_html_e('Guests are excluded if any roles are selected', 'conditional-discounts'); ?></li>
+                                <li>
+                                    <?php
+                                    printf(
+                                        /* translators: %s: <strong> tag wrapped around "all users" */
+                                        esc_html__('Leave all unselected to apply to %s (including guests)', 'conditional-discounts'),
+                                        '<strong>' . esc_html__('all users', 'conditional-discounts') . '</strong>'
+                                    );
+                                    ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    printf(
+                                        /* translators: %s: <em> tag wrapped around "OR" */
+                                        esc_html__('Uses %s logic: users need only one matching role', 'conditional-discounts'),
+                                        '<em>"OR"</em>'
+                                    );
+                                    ?>
+                                </li>
+                            </ul>
+                        </div>                      
                 </td>
             </tr>
             

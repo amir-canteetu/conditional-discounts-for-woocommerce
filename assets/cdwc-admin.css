@@ -1,110 +1,47 @@
-.discount-rules-container {
-    /* Clearfix for modern browsers */
-    display: flow-root;
-}
-
-.options-group {
-    width: 70%;
-    float: right;
-    box-sizing: border-box;
-    padding-left: 20px;
-}
-
-
-
-.options-group {
-    flex: 1 1 70%;
-    min-width: 300px;  
-}
-
-
-.options-group {
-    grid-column: 2;
-}
-
-
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
+/* ----- Base & Layout ----- */
 .discount-rules-container {
     display: flex;
     gap: 20px;
+    background: #fff;
 }
-
 
 .options-group {
     flex: 1;
-    background: #fff;
+    min-width: 300px;
     padding: 20px;
-    padding-right:0;
 }
 
-/* Reset float and add flex child */
-.options-group {
-    float: none;
-    margin: 0;
-}
-
-.form-field {
-    padding: 10px 10px 10px 10px;
-}
-
-
-
+/* ----- Table & Form Elements ----- */
 .form-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
+}
+
+.form-table th,
+.form-table td {
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+    text-align: left;
 }
 
 .form-table th {
     width: 25%;
-    text-align: left;
-    padding: 20px;
-    vertical-align: top;
-    border-bottom: 1px solid #f0f0f0;
 }
 
-.form-table td {
-    padding: 20px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.form-table tr:last-child th,
-.form-table tr:last-child td {
+.form-table tr:last-child > * {
     border-bottom: none;
 }
 
+/* ----- Input Styling ----- */
 .form-table input[type="text"],
 .form-table input[type="number"],
-.form-table select {
+.form-table select,
+.cdwc-product-search,
+.cdwc-taxonomy-search {
     width: 100%;
     max-width: 400px;
 }
-
-.form-table .cdwc-product-search,
-.form-table .cdwc-taxonomy-search {
-    width: 100% !important;
-    max-width: 100%;
-}
-
-.form-table .description {
-    display: block;
-    margin-top: 5px;
-    color: #666;
-}
-
-.role-checkboxes label {
-    display: block;
-    margin: 5px 0;
-}
-
-#discount-table {
-    border:none;
-}
-
-
 
 .input-wrapper {
     position: relative;
@@ -112,20 +49,32 @@
     width: 100%;
 }
 
-.symbol {
+.input-wrapper .symbol {
     position: absolute;
     left: 8px;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 2;
+    color: #666;
     pointer-events: none;
+}
+
+/* ----- Specific Components ----- */
+.role-checkboxes label {
+    display: block;
+    margin: 5px 0;
+}
+
+.description {
+    display: block;
+    margin-top: 5px;
     color: #666;
 }
 
 #discount_value, #discount_cap, #discount_min_cart_total {
-    padding-left: 25px !important; 
-    width:100%;
+    padding-left: 25px !important;
+    width: 100%;
 }
 
-
-
+#discount-table {
+    border: none;
+}
