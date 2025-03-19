@@ -223,9 +223,10 @@ class DiscountApplier {
         }
 
         private function get_products_in_terms($term_ids, $taxonomy) {
-            if (empty($term_ids)) return [];
+            
+            if (empty($term_ids)) { return []; }
 
-            return get_posts([
+            $args = [
                 'post_type' => 'product',
                 'posts_per_page' => -1,
                 'fields' => 'ids',
@@ -234,9 +235,15 @@ class DiscountApplier {
                         'taxonomy' => $taxonomy,
                         'field' => 'term_id',
                         'terms' => $term_ids,
+                        'include_children' => true, // Explicit for clarity
                     ]
-                ]
-            ]);
+                ],
+                'update_post_term_cache' => false, // Skip term meta cache
+                'update_post_meta_cache' => false, // Skip post meta cache
+                'no_found_rows' => true, // Skip pagination calculation
+            ];
+
+            return get_posts($args);
         }
 
         private function is_product_eligible($cart_item, $eligible_products, $discount_type) {

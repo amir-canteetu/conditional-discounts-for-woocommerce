@@ -77,7 +77,7 @@ class AdminInterface {
                 'value_type' => 'percentage',
                 'value' => 0,
                 'discount_cap' => 0,
-                'max_use' => 1,
+                'max_use' => 0,
                 'products' => [],
                 'brands' => [],
                 'categories' => [],
@@ -167,8 +167,8 @@ class AdminInterface {
     public function ajax_search_products() {
         $this->verify_ajax_request();
         
-        $search_term = isset($_GET['q']) ? sanitize_text_field($_GET['q']) : '';
-        $page = isset($_GET['page']) ? absint($_GET['page']) : 1;
+        $search_term    = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+        $page           = isset($_GET['page']) ? absint($_GET['page']) : 1;
         
         $args = [
             'post_type'      => 'product',
@@ -177,6 +177,7 @@ class AdminInterface {
             's'              => $search_term,
             'orderby'        => 'title',
             'order'          => 'ASC',
+            'post_status'    => 'publish'
         ];
 
         $query = new \WP_Query($args);
@@ -184,7 +185,7 @@ class AdminInterface {
 
         foreach ($query->posts as $post) {
             $product = wc_get_product($post->ID);
-            if ($product) {
+            if ($product && $product->is_visible()) { 
                 $results[] = [
                     'id'   => $post->ID,
                     'text' => $product->get_formatted_name(),
@@ -203,9 +204,9 @@ class AdminInterface {
     public function ajax_search_taxonomy() {
         $this->verify_ajax_request();
 
-        $search_term = isset($_GET['q']) ? sanitize_text_field($_GET['q']) : '';
-        $taxonomy = isset($_GET['taxonomy']) ? sanitize_key($_GET['taxonomy']) : '';
-        $page = isset($_GET['page']) ? absint($_GET['page']) : 1;
+        $search_term    = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+        $taxonomy       = isset($_GET['taxonomy']) ? sanitize_key($_GET['taxonomy']) : '';
+        $page           = isset($_GET['page']) ? absint($_GET['page']) : 1;
 
         $valid_taxonomies = ['product_cat', 'product_tag', 'product_brand'];
         if (!in_array($taxonomy, $valid_taxonomies, true)) {
@@ -246,9 +247,12 @@ class AdminInterface {
 
     public function save_discount_rules($post_id) {
 
-        if (!isset($_POST['discount_rules_nonce']) || 
-            !wp_verify_nonce($_POST['discount_rules_nonce'], 'save_discount_rules')) {
+        if (!isset($_POST['discount_rules_nonce'])) {
             return;
+        }
+
+        if (!wp_verify_nonce( sanitize_key(wp_unslash($_POST['discount_rules_nonce'])), 'save_discount_rules') ) {
+            wp_die(__('Invalid nonce', 'conditional-discounts-for-woocommerce'));
         }
 
         // Check if this is an autosave
@@ -270,7 +274,6 @@ class AdminInterface {
             'value_type' => 'percentage',
             'value' => 0,
             'discount_cap' => 0,
-            'max_use' => 1,
             'products' => [],
             'categories' => [],
             'tags' => [],
@@ -291,8 +294,8 @@ class AdminInterface {
             $sanitized_data['min_cart_quantity']    = max(0, intval($input['min_cart_quantity'] ?? 0));
             $sanitized_data['value']                = max(0, floatval($input['value'] ?? 0));
             $sanitized_data['discount_cap']         = max(0, floatval($input['discount_cap'] ?? 0));
-            $sanitized_data['max_use']              = max(0, intval($input['max_use'] ?? 1));
-            $sanitized_data['max_use_per_user']     = max(0, intval($input['max_use_per_user'] ?? 0));
+            $sanitized_data['max_use']              = max(0, intval($input['max_use'] ?? 0));
+            $sanitized_data['max_use_per_user']     = max(0, intval($input['max_use_per_user'] ?? 1));
 
             // Select fields
             $sanitized_data['discount_type']    = in_array($input['discount_type'] ?? '', ['product', 'category', 'tag', 'brand'])  ? $input['discount_type']  : 'product';
