@@ -85,6 +85,10 @@
                         <p class="description">
                             <?php
                             $description = sprintf(
+                                /* translators: 
+                                 * 1. Currency symbol (e.g. $, €) 
+                                 * The %% is a literal percentage sign (needs double %% for sprintf)
+                                 */
                                 __("Choose how discounts are calculated:\n
                                     • Percentage: Discount applied to each eligible product's price (Example: 10%% off every qualifying product)\n
                                     Discount Cap (below) limits the total discount amount\n
@@ -363,6 +367,7 @@
                     <p class="description">
                             <?php
                                 printf(
+                                    /* translators: %s: Timezone name (e.g. "America/New York") */
                                     __('Optional date when this discount becomes active. Leave blank to start immediately. Timezone: %s', 'conditional-discounts-for-woocommerce'),
                                     $timezone
                                 );
@@ -380,8 +385,9 @@
                     <p class="description">
                         <?php
                             printf(
-                                    __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts-for-woocommerce'),
-                                    $timezone
+                                /* translators: %s: Timezone name (e.g. "America/New York") */
+                                __('Optional date when this discount will expire. Leave blank for no expiration. Timezone: %s', 'conditional-discounts-for-woocommerce'),
+                                $timezone
                             );
                         ?>
                     </p>  

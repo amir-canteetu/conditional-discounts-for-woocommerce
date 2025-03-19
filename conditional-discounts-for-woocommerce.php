@@ -6,7 +6,7 @@
  * Version: 1.0.0
  * Author: Amir Candido
  * License: GPL-2.0+
- * Text Domain: conditional-discounts
+ * Text Domain: conditional-discounts-for-woocommerce
  * Domain Path: /languages
  * WC requires at least: 5.0
  * WC tested up to: 8.0" 
