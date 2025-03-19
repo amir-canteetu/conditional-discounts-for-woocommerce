@@ -24,47 +24,68 @@ class DiscountApplier {
         }
 
         private function get_active_rules() {
-                $args = [
-                    'post_type' => 'shop_discount',
-                    'posts_per_page' => -1,
-                    'meta_query' => [
-                        [
-                            'key' => 'cdwc_rules',
-                            'compare' => 'EXISTS'
-                        ]
-                    ]
-                ];
+            $now = current_time('timestamp');
 
+            $args = [
+                'post_type' => 'shop_discount',
+                'posts_per_page' => -1,  
+                'meta_query' => [
+                    'relation' => 'AND',
+                    [
+                        'key' => 'cdwc_rules',
+                        'compare' => 'EXISTS',
+                    ],
+                    [
+                        'key' => 'cdwc_rules',
+                        'compare' => '!=',
+                        'value' => serialize(false), // Exclude disabled rules.
+                    ],
+                ],
+                'fields' => 'ids', // Only retrieve post IDs for efficiency
+            ];
+
+            $query = new \WP_Query($args);
+
+            if ($query->have_posts()) {
                 $rules = [];
-                $posts = get_posts($args);
+                foreach ($query->posts as $post_id) {
+                    $rule = get_post_meta($post_id, 'cdwc_rules', true);
 
-                foreach ($posts as $post) {
-
-                    $rule = get_post_meta($post->ID, 'cdwc_rules', true);
-
-                    if (!$rule['enabled']) {
-                        continue;
+                    if (empty($rule)) {
+                        continue; // Skip if meta data is missing or invalid
                     }
 
-                    if ($this->is_rule_valid($rule)) {
+                    if ($this->is_rule_valid($rule, $now)) {
                         $rules[] = $rule;
                     }
                 }
-
                 return $rules;
+            }
+
+            return []; // Return empty array if no active rules found
         }
 
-        private function is_rule_valid($rule) {
-             
-            $now    = current_time('timestamp');
-            $start  = strtotime($rule['start_date']);
-            $end    = strtotime($rule['end_date']);
+        private function is_rule_valid($rule, $now) {
+            if (!isset($rule['enabled']) || !$rule['enabled']) {
+                return false;
+            }
 
-            if ($start && $now < $start) {return false;}
-            if ($end && $now > $end) {return false;}
+            if (isset($rule['start_date']) && !empty($rule['start_date'])) {
+                $start = strtotime($rule['start_date']);
+                if ($start && $now < $start) {
+                    return false;
+                }
+            }
+
+            if (isset($rule['end_date']) && !empty($rule['end_date'])) {
+                $end = strtotime($rule['end_date']);
+                if ($end && $now > $end) {
+                    return false;
+                }
+            }
 
             $global_usage = get_post_meta($rule['post_id'], 'cdwc_usage_count', true);
-            if ($rule['max_use'] > 0 && $global_usage >= $rule['max_use']) {
+            if (isset($rule['max_use']) && $rule['max_use'] > 0 && $global_usage >= $rule['max_use']) {
                 return false;
             }
 
