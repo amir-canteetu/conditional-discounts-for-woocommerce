@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/amir-canteetu/conditional-discounts-for-woocommerce
  * Description: Advanced conditional discount rules for WooCommerce
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Amir Candido
  * License: GPL-2.0+
  * Text Domain: conditional-discounts
  * Domain Path: /languages
