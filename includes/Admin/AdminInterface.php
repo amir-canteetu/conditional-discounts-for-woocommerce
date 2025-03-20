@@ -121,6 +121,8 @@ class AdminInterface {
         }   
         
     private function enqueue_assets() {
+        
+        $suffix = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? '' : '.min';
 
         wp_enqueue_script(
             'cdwc-select2',
@@ -139,16 +141,16 @@ class AdminInterface {
 
         wp_enqueue_style(
             'cdwc-admin-css',
-            CDWC_PLUGIN_URL . '/assets/cdwc-admin.css',
+            CDWC_PLUGIN_URL . '/assets/cdwc-admin' . $suffix . '.css',
             [],
             '1.0.0'
         );
 
         wp_enqueue_script(
             'cdwc-admin-js',
-            CDWC_PLUGIN_URL . '/assets/cdwc-admin.js',
+            CDWC_PLUGIN_URL . '/assets/cdwc-admin' . $suffix . '.js',
             ['jquery', 'cdwc-select2'],
-            filemtime(CDWC_PLUGIN_PATH . 'assets/cdwc-admin.js'),
+            filemtime( CDWC_PLUGIN_PATH . '/assets/cdwc-admin' . $suffix . '.js' ),
             true
         );
 

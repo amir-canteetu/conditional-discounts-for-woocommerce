@@ -68,7 +68,7 @@ jQuery(function($) {
         });
     });
 
-    // Optional: Format product results with additional info
+    // Format product results with additional info
     function formatProductResult(product) {
         if (product.loading) return product.text;
         
@@ -80,10 +80,6 @@ jQuery(function($) {
         );
 
         container.find('.title').text(product.text);
-        
-        // Add additional product info if needed
-        // You would need to modify the AJAX response to include more data
-        // container.find('.meta').text('SKU: ' + product.sku);
         
         return container;
     }

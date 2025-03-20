@@ -1,73 +1,60 @@
 === Conditional Discounts for WooCommerce ===
 Contributors: amir_candido
-Tags: WooCommerce, discounts, cart rules, conditional discounts, dynamic pricing  
-Requires at least: 6.0  
-Tested up to: 6.7.1 
-Requires PHP: 7.4  
-Stable tag: 1.0.0  
-License: GPLv2 or later  
-License URI: https://www.gnu.org/licenses/gpl-2.0.html  
-
-Create flexible, onditional discounts for WooCommerce to incentivize your customers and boost sales.
+Tags: woocommerce, discount, coupon, conditional discounts, dynamic pricing, sales, deals
+Requires at least: 5.0
+Tested up to: 6.7.2
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Requires PHP: 7.0
 
 == Description ==
+Conditional Discounts for WooCommerce is a flexible discount plugin that allows you to create dynamic, rule-based discounts for your WooCommerce store. Increase sales and customer engagement by offering targeted deals based on cart totals, item quantities, user roles, and specific product attributes such as categories, tags, or brands. Easily manage discount rules with a user-friendly admin interface and benefit from seamless WooCommerce integration.
 
-**Conditional Discounts for WooCommerce** allows you to create dynamic discounts based on a variety of cart and other conditions. Whether you want to offer discounts based on cart 
-total, specific product combinations, or time periods, this plugin provides an intuitive interface to set up and manage discounts with ease.
+**Key Features:**
+- **Dynamic Discount Rules:** Set discounts based on minimum cart totals, item quantities, or specific products.
+- **Time-Sensitive Promotions:** Schedule discounts with start and end dates.
+- **Usage Limits:** Control global usage and per-user discount limits.
+- **Flexible Discount Types:** Choose between percentage-based discounts or fixed amount reductions with customizable caps.
+- **WooCommerce Integration:** Fully integrates with WooCommerce to apply discounts automatically during the checkout process.
+- **User Role Specific Offers:** Target discounts for specific user roles or guest users using email identification.
 
-### Features
-- Define cart-based conditions to trigger discounts.
-- Create percentage or fixed-amount discounts.
-- Apply discounts to the entire cart or specific products.
-- Support for multiple conditions, including product quantity, cart total, and time periods.
-- Integrates seamlessly with WooCommerce settings.
-- Easy-to-use interface for admins.
-
-Use this plugin to incentivize customer purchases, clear inventory, or reward specific customer groups.
+Boost your store’s performance with an extension that is both feature-rich and easy to use. Perfect for store owners looking to drive conversions with targeted discount offers.
 
 == Installation ==
-
-1. Upload the plugin files to the `/wp-content/plugins/conditional-discounts` directory, or install the plugin through the WordPress Plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to **WooCommerce > Settings > Conditional Discounts** to configure your discounts.
+1. Upload the `conditional-discounts-for-woocommerce` folder to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to the Discounts menu in your WordPress dashboard to add and manage discount rules.
+4. Configure your discount rules based on cart totals, item counts, product categories, tags, or brands.
 
 == Frequently Asked Questions ==
+= How do I create a new discount rule? =
+Once the plugin is activated, go to the Discounts section in your WordPress dashboard. Click "Add New Discount" and fill in the rule details such as label, discount type, value, and applicable conditions.
 
-= Can I apply multiple discounts at the same time? =  
-Yes, the plugin allows stacking discounts, provided their conditions are met. You can control this behavior in the settings.
+= Can I limit the discount usage? =
+Yes. You can set both global usage limits and per-user usage limits in the discount settings to ensure controlled promotion deployment.
 
-= Does this plugin support multilingual setups? =  
-Yes, the plugin is translation-ready and compatible with popular translation plugins like WPML.
+= Does the plugin work with all WooCommerce themes? =
+Absolutely. The extension is built to integrate seamlessly with WooCommerce, ensuring compatibility with most themes and setups.
 
-= What conditions can I set for discounts? =  
-You can set conditions based on:
-- Cart total
-- Product quantity
-- Time
-- And more!
-
-= Will this plugin slow down my site? =  
-No, the plugin is optimized to run efficiently on WooCommerce-powered sites.
+= What discount types are available? =
+You can choose between percentage discounts or fixed amount discounts. Additionally, percentage discounts can be capped to prevent excessive discounts.
 
 == Screenshots ==
+1. **Discount Rule Configuration** - Easily configure your discount rules in the admin area.
 
-1. **Admin Settings Page:**  
-2. **Cart Discounts Settings**  
-3. **Product Discount Settings**  
-2. **Cart Page with Discount Applied:** See how discounts appear on the front end. 
 
 == Changelog ==
-
-= 1.0.0 =  
-- Initial release.  
-- Added support for cart-based conditional discounts.  
-- Implemented admin interface for managing discount rules.  
+= 1.0.0 =
+* Initial release of Conditional Discounts for WooCommerce.
+* Added support for conditional discount rules based on cart total, item quantity, and product attributes.
+* Integrated WooCommerce cart and order hooks for seamless discount application and usage tracking.
 
 == Upgrade Notice ==
+= 1.0.0 =
+Initial release. 
 
-= 1.0.0 =  
-First stable release of the plugin. Install and enjoy flexible conditional discounts!
+Conditional Discounts for WooCommerce is designed to help you maximize your sales with smart, targeted promotions. Its easy setup and flexible rule configuration make it an essential tool for any WooCommerce store owner looking to optimize pricing strategies and boost conversions.
 
-== Support ==
 
-If you encounter any issues, please contact me through the forum.
+
