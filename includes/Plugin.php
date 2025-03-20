@@ -5,6 +5,7 @@ namespace Supreme\ConditionalDiscounts;
 
 use Supreme\ConditionalDiscounts\Admin\AdminInterface;
 use Supreme\ConditionalDiscounts\DiscountApplier;
+use Supreme\ConditionalDiscounts\PluginActions;
 
 if (!defined('ABSPATH')) { exit; }
 
@@ -18,7 +19,6 @@ class Plugin {
     
     public function initialize() {
         $this->register_services();
-        $this->register_hooks();
     }
 
 
@@ -26,13 +26,9 @@ class Plugin {
     private function register_services() {
         
         (new AdminInterface());
-        (new DiscountApplier());      
+        (new DiscountApplier());  
+        (new PluginActions());  
 
-    }
-
-    private function register_hooks() {
-        
-      
     }
     
 }
